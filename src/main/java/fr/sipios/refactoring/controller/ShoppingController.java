@@ -1,5 +1,8 @@
 package fr.sipios.refactoring.controller;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,15 +19,51 @@ public class ShoppingController {
     @PostMapping
     public String getPrice(@RequestBody Item[] body) {
         int price = 0;
-        for (int i = 0; i < body.length; i++) {
-            Item it = body[i];
 
-            if (it.getType().equals("TSHIRT")) {
-                price += 30 * it.getQuantity();
-            } else if (it.getType().equals("DRESS")) {
-                price += 50 * it.getQuantity();
-            } else if (it.getType().equals("JACKET")) {
-                price += 100 * it.getQuantity();
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+        cal.setTime(date);
+
+        if (
+            !(
+                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                cal.get(Calendar.MONTH) == 5
+            ) ||
+            !(
+                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                cal.get(Calendar.MONTH) == 0
+            )
+        ) {
+            for (int i = 0; i < body.length; i++) {
+                Item it = body[i];
+
+                if (it.getType().equals("TSHIRT")) {
+                    price += 30 * it.getQuantity();
+                } else if (it.getType().equals("DRESS")) {
+                    price += 50 * it.getQuantity();
+                } else if (it.getType().equals("JACKET")) {
+                    price += 100 * it.getQuantity();
+                }
+                // else if (it.getType().equals("SWEATSHIRT")) {
+                //     price += 80 * it.getQuantity();
+                // }
+            }
+        } else {
+            for (int i = 0; i < body.length; i++) {
+                Item it = body[i];
+
+                if (it.getType().equals("TSHIRT")) {
+                    price += 30 * it.getQuantity();
+                } else if (it.getType().equals("DRESS")) {
+                    price += 50 * it.getQuantity() * 0.2;
+                } else if (it.getType().equals("JACKET")) {
+                    price += 100 * it.getQuantity() * 0.1;
+                }
+                // else if (it.getType().equals("SWEATSHIRT")) {
+                //     price += 80 * it.getQuantity();
+                // }
             }
         }
 
