@@ -12,6 +12,6 @@ class ShoppingControllerTests extends UnitTest {
 
     @Test
     void should_not_throw() {
-        Assertions.assertDoesNotThrow(() -> controller.getPrice(new Item[] {}));
+        Assertions.assertDoesNotThrow(() -> controller.getPrice(new Body()));
     }
 }

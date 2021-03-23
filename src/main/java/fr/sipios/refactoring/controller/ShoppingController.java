@@ -17,12 +17,23 @@ public class ShoppingController {
     private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
     @PostMapping
-    public String getPrice(@RequestBody Item[] body) {
+    public String getPrice(@RequestBody Body body) {
         int price = 0;
+        double discount;
 
         Date date = new Date();
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
+
+        if (body.getType().equals("STANDARD_CUSTOMER")) {
+            discount = 1;
+        } else if (body.getType().equals("PREMIUM_CUSTOMER")) {
+            discount = 0.9;
+        } else if (body.getType().equals("PLATINUM_CUSTOMER")) {
+            discount = 0.5;
+        } else {
+            discount = 1;
+        }
 
         if (
             !(
@@ -36,30 +47,38 @@ public class ShoppingController {
                 cal.get(Calendar.MONTH) == 0
             )
         ) {
-            for (int i = 0; i < body.length; i++) {
-                Item it = body[i];
+            if (body.getItems() == null) {
+                return "0";
+            }
+
+            for (int i = 0; i < body.getItems().length; i++) {
+                Item it = body.getItems()[i];
 
                 if (it.getType().equals("TSHIRT")) {
-                    price += 30 * it.getQuantity();
+                    price += 30 * it.getQuantity() * discount;
                 } else if (it.getType().equals("DRESS")) {
-                    price += 50 * it.getQuantity();
+                    price += 50 * it.getQuantity() * discount;
                 } else if (it.getType().equals("JACKET")) {
-                    price += 100 * it.getQuantity();
+                    price += 100 * it.getQuantity() * discount;
                 }
                 // else if (it.getType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getQuantity();
                 // }
             }
         } else {
-            for (int i = 0; i < body.length; i++) {
-                Item it = body[i];
+            if (body.getItems() == null) {
+                return "0";
+            }
+
+            for (int i = 0; i < body.getItems().length; i++) {
+                Item it = body.getItems()[i];
 
                 if (it.getType().equals("TSHIRT")) {
-                    price += 30 * it.getQuantity();
+                    price += 30 * it.getQuantity() * discount;
                 } else if (it.getType().equals("DRESS")) {
-                    price += 50 * it.getQuantity() * 0.2;
+                    price += 50 * it.getQuantity() * 0.2 * discount;
                 } else if (it.getType().equals("JACKET")) {
-                    price += 100 * it.getQuantity() * 0.1;
+                    price += 100 * it.getQuantity() * 0.1 * discount;
                 }
                 // else if (it.getType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getQuantity();
@@ -68,6 +87,35 @@ public class ShoppingController {
         }
 
         return String.valueOf(price);
+    }
+}
+
+class Body {
+
+    private Item[] items;
+    private String type;
+
+    public Body(Item[] items, String shopperType) {
+        this.items = items;
+        this.type = shopperType;
+    }
+
+    public Body() {}
+
+    public Item[] getItems() {
+        return items;
+    }
+
+    public void setItems(Item[] items) {
+        this.items = items;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
 
