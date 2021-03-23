@@ -35,7 +35,7 @@ public class ShoppingController {
         } else if (body.getType().equals("PLATINUM_CUSTOMER")) {
             discount = 0.5;
         } else {
-            discount = 1;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         // Compute total amount depending on the types and quantity of product and
@@ -45,7 +45,7 @@ public class ShoppingController {
                 cal.get(Calendar.DAY_OF_MONTH) < 15 &&
                 cal.get(Calendar.DAY_OF_MONTH) > 5 &&
                 cal.get(Calendar.MONTH) == 5
-            ) ||
+            ) &&
             !(
                 cal.get(Calendar.DAY_OF_MONTH) < 15 &&
                 cal.get(Calendar.DAY_OF_MONTH) > 5 &&
