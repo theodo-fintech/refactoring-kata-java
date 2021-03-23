@@ -81,9 +81,9 @@ public class ShoppingController {
                 if (it.getType().equals("TSHIRT")) {
                     price += 30 * it.getQuantity() * discount;
                 } else if (it.getType().equals("DRESS")) {
-                    price += 50 * it.getQuantity() * 0.2 * discount;
+                    price += 50 * it.getQuantity() * 0.8 * discount;
                 } else if (it.getType().equals("JACKET")) {
-                    price += 100 * it.getQuantity() * 0.1 * discount;
+                    price += 100 * it.getQuantity() * 0.9 * discount;
                 }
                 // else if (it.getType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getQuantity();
