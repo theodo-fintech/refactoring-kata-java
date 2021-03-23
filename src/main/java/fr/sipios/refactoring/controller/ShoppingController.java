@@ -18,7 +18,7 @@ public class ShoppingController {
 
     @PostMapping
     public String getPrice(@RequestBody Body body) {
-        int price = 0;
+        double price = 0;
         double discount;
 
         Date date = new Date();
