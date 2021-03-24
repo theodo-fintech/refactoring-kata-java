@@ -1,4 +1,4 @@
-package fr.sipios.refactoring.controller;
+package com.sipios.refactoring.controller;
 
 import java.util.Calendar;
 import java.util.Date;
