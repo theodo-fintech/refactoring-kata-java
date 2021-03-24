@@ -30,6 +30,10 @@ What do we expect from you:
 - several commits, with an explicit message each time
 - a file / message / email explaining your process and principles you've followed
 
+## Prerequisite
+
+- Java 11
+
 ## How to run the code
 
 - You can start the application using maven: `./mvn`. It will expose a route POST accessible at `http://localhost:8080/shopping
