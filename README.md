@@ -36,7 +36,7 @@ What do we expect from you:
 
 ## How to run the code
 
-- You can start the application using maven: `./mvn`. It will expose a route POST accessible at `http://localhost:8080/shopping
+- You can start the application using maven: `./mvnw`. It will expose a route POST accessible at `http://localhost:8080/shopping
 - You can launch the tests with `./mvnw test`
 
 **Good luck!**
