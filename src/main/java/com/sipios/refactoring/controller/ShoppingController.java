@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.List;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import com.sipios.refactoring.dto.BodyDto;
@@ -27,6 +28,8 @@ public class ShoppingController {
 
     @PostMapping
     public String getPrice(@RequestBody Body b) {
+        logger.info("getPrice - Start");
+
         final ShoppingService shoppingService = new ShoppingService();
         final BodyDto bodyDto = convertBodyToBodyDto(b);
         String price = "0.0";
@@ -34,8 +37,11 @@ public class ShoppingController {
         try{
             price = shoppingService.getPrice(bodyDto);
         } catch (Exception e) {
+            logger.error(MessageFormat.format("getPrice - {0}",e.getMessage()));
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+
+        logger.info("getPrice - End");
 
         return price;
     }

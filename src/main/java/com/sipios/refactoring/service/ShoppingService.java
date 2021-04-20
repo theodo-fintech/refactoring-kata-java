@@ -9,13 +9,6 @@ import java.util.TimeZone;
 import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * ShoppingService class
@@ -30,12 +23,16 @@ public class ShoppingService {
     final String DRESS = "DRESS";
     final String JACKET = "JACKET";
 
+    private Logger logger = LoggerFactory.getLogger(ShoppingService.class);
+
     /**
      * Calculate total price for a list of items
      * @param b Data to use to calculate the price
      * @return Price calculated
      */
     public String getPrice(BodyDto b) throws Exception {
+        logger.info("getPrice - Start");
+
         // if there is no items, then stop process and return 0 as the price
         if (b.getItems() == null) {
             return "0";
@@ -53,6 +50,8 @@ public class ShoppingService {
             throw new Exception(MessageFormat.format("Price ({0}) is too high for standard customer", String.valueOf(price)));
         }
         
+        logger.info("getPrice - End");
+
         return String.valueOf(price);
     }
 
@@ -62,6 +61,8 @@ public class ShoppingService {
      * @return Discount calculated
      */
     private double calculateDiscountForCustomerType(String type) throws Exception {
+        logger.info("calculateDiscountForCustomerType - Start");
+
         double discount = 1;
 
         if (STANDARD_CUSTOMER.equals(type)) {
@@ -74,6 +75,8 @@ public class ShoppingService {
             throw new Exception("Cannot identify the customer type");
         }
 
+        logger.info("calculateDiscountForCustomerType - End");
+
         return discount;
     }
 
@@ -84,6 +87,8 @@ public class ShoppingService {
      * @return Price calculated
      */
     private double calculatePrice(ItemDto[] listItem, double discount){
+        logger.info("calculatePrice - Start");
+
         double price = 0;
 
         Date date = new Date();
@@ -119,6 +124,8 @@ public class ShoppingService {
                 }
             }
         }
+
+        logger.info("calculatePrice - End");
 
         return price;
     }
