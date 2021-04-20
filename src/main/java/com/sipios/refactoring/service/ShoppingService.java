@@ -16,42 +16,56 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * ShoppingService class
+ */
 public class ShoppingService {
 
-    public String getPrice(BodyDto b) {
-        double p = 0;
-        double d;
+    final String STANDARD_CUSTOMER = "STANDARD_CUSTOMER";
+    final String PREMIUM_CUSTOMER = "PREMIUM_CUSTOMER";
+    final String PLATINUM_CUSTOMER = "PLATINUM_CUSTOMER";
 
+    final String TSHIRT = "TSHIRT";
+    final String DRESS = "DRESS";
+    final String JACKET = "JACKET";
+
+    /**
+     * 
+     * @param b Data to use to calculate the price
+     * @return Price calculated
+     */
+    public String getPrice(BodyDto b) {
+        // if there is no items, then stop process and return 0 as the price
         if (b.getItems() == null) {
             return "0";
         }
 
-        d = this.calculateDiscountForCustomerType(b.getType());
-        p = this.calculatePrice(b.getItems(), d);
+        double discount = this.calculateDiscountForCustomerType(b.getType());
+        double price = this.calculatePrice(b.getItems(), discount);
 
         try {
-            if (b.getType().equals("STANDARD_CUSTOMER")) {
-                if (p > 200) {
-                    throw new Exception("Price (" + p + ") is too high for standard customer");
+            if (STANDARD_CUSTOMER.equals(b.getType())) {
+                if (price > 200) {
+                    throw new Exception("Price (" + price + ") is too high for standard customer");
                 }
-            } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
-                if (p > 800) {
-                    throw new Exception("Price (" + p + ") is too high for premium customer");
+            } else if (PREMIUM_CUSTOMER.equals(b.getType())) {
+                if (price > 800) {
+                    throw new Exception("Price (" + price + ") is too high for premium customer");
                 }
-            } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
-                if (p > 2000) {
-                    throw new Exception("Price (" + p + ") is too high for platinum customer");
+            } else if (PLATINUM_CUSTOMER.equals(b.getType())) {
+                if (price > 2000) {
+                    throw new Exception("Price (" + price + ") is too high for platinum customer");
                 }
             } else {
-                if (p > 200) {
-                    throw new Exception("Price (" + p + ") is too high for standard customer");
+                if (price > 200) {
+                    throw new Exception("Price (" + price + ") is too high for standard customer");
                 }
             }
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
-        return String.valueOf(p);
+        return String.valueOf(price);
     }
 
     /**
@@ -62,12 +76,11 @@ public class ShoppingService {
     private double calculateDiscountForCustomerType(String type){
         double discount = 1;
 
-        // Compute discount for customer
-        if (type.equals("STANDARD_CUSTOMER")) {
+        if (STANDARD_CUSTOMER.equals(type)) {
             discount = 1;
-        } else if (type.equals("PREMIUM_CUSTOMER")) {
+        } else if (PREMIUM_CUSTOMER.equals(type)) {
             discount = 0.9;
-        } else if (type.equals("PLATINUM_CUSTOMER")) {
+        } else if (PLATINUM_CUSTOMER.equals(type)) {
             discount = 0.5;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -93,35 +106,26 @@ public class ShoppingService {
             !(
                 cal.get(Calendar.DAY_OF_MONTH) < 15 &&
                 cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 5
-            ) &&
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 0
+                (cal.get(Calendar.MONTH) == 0 || cal.get(Calendar.MONTH) == 5)
             )
         ) {
             for (int i = 0; i < listItem.length; i++) {
-                ItemDto it = listItem[i];
-
-                if (it.getType().equals("TSHIRT")) {
-                    price += 30 * it.getNb() * discount;
-                } else if (it.getType().equals("DRESS")) {
-                    price += 50 * it.getNb() * discount;
-                } else if (it.getType().equals("JACKET")) {
-                    price += 100 * it.getNb() * discount;
+                if (TSHIRT.equals(listItem[i].getType())) {
+                    price += 30 * listItem[i].getNb() * discount;
+                } else if (DRESS.equals(listItem[i].getType())) {
+                    price += 50 * listItem[i].getNb() * discount;
+                } else if (JACKET.equals(listItem[i].getType())) {
+                    price += 100 * listItem[i].getNb() * discount;
                 }
             }
         } else {
             for (int i = 0; i < listItem.length; i++) {
-                ItemDto it = listItem[i];
-
-                if (it.getType().equals("TSHIRT")) {
-                    price += 30 * it.getNb() * discount;
-                } else if (it.getType().equals("DRESS")) {
-                    price += 50 * it.getNb() * 0.8 * discount;
-                } else if (it.getType().equals("JACKET")) {
-                    price += 100 * it.getNb() * 0.9 * discount;
+                if (TSHIRT.equals(listItem[i].getType())) {
+                    price += 30 * listItem[i].getNb() * discount;
+                } else if (DRESS.equals(listItem[i].getType())) {
+                    price += 50 * listItem[i].getNb() * 0.8 * discount;
+                } else if (JACKET.equals(listItem[i].getType())) {
+                    price += 100 * listItem[i].getNb() * 0.9 * discount;
                 }
             }
         }
