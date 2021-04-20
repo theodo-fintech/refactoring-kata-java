@@ -29,8 +29,15 @@ public class ShoppingController {
     public String getPrice(@RequestBody Body b) {
         final ShoppingService shoppingService = new ShoppingService();
         final BodyDto bodyDto = convertBodyToBodyDto(b);
+        String price = "0.0";
 
-        return shoppingService.getPrice(bodyDto);
+        try{
+            price = shoppingService.getPrice(bodyDto);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
+        return price;
     }
 
     /**

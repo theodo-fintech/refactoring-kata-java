@@ -6,6 +6,7 @@ import com.sipios.refactoring.dto.ItemDto;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,11 +31,11 @@ public class ShoppingService {
     final String JACKET = "JACKET";
 
     /**
-     * 
+     * Calculate total price for a list of items
      * @param b Data to use to calculate the price
      * @return Price calculated
      */
-    public String getPrice(BodyDto b) {
+    public String getPrice(BodyDto b) throws Exception {
         // if there is no items, then stop process and return 0 as the price
         if (b.getItems() == null) {
             return "0";
@@ -43,28 +44,15 @@ public class ShoppingService {
         double discount = this.calculateDiscountForCustomerType(b.getType());
         double price = this.calculatePrice(b.getItems(), discount);
 
-        try {
-            if (STANDARD_CUSTOMER.equals(b.getType())) {
-                if (price > 200) {
-                    throw new Exception("Price (" + price + ") is too high for standard customer");
-                }
-            } else if (PREMIUM_CUSTOMER.equals(b.getType())) {
-                if (price > 800) {
-                    throw new Exception("Price (" + price + ") is too high for premium customer");
-                }
-            } else if (PLATINUM_CUSTOMER.equals(b.getType())) {
-                if (price > 2000) {
-                    throw new Exception("Price (" + price + ") is too high for platinum customer");
-                }
-            } else {
-                if (price > 200) {
-                    throw new Exception("Price (" + price + ") is too high for standard customer");
-                }
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        // Handle max price for every customer type
+        if (PREMIUM_CUSTOMER.equals(b.getType()) && price > 800) {
+            throw new Exception(MessageFormat.format("Price ({0}) is too high for premium customer", String.valueOf(price)));
+        } else if (PLATINUM_CUSTOMER.equals(b.getType()) && price > 2000) {
+            throw new Exception(MessageFormat.format("Price ({0}) is too high for platinum customer", String.valueOf(price)));
+        } else if(STANDARD_CUSTOMER.equals(b.getType()) && price > 200){
+            throw new Exception(MessageFormat.format("Price ({0}) is too high for standard customer", String.valueOf(price)));
         }
-
+        
         return String.valueOf(price);
     }
 
@@ -73,7 +61,7 @@ public class ShoppingService {
      * @param type Customer type
      * @return Discount calculated
      */
-    private double calculateDiscountForCustomerType(String type){
+    private double calculateDiscountForCustomerType(String type) throws Exception {
         double discount = 1;
 
         if (STANDARD_CUSTOMER.equals(type)) {
@@ -83,7 +71,7 @@ public class ShoppingService {
         } else if (PLATINUM_CUSTOMER.equals(type)) {
             discount = 0.5;
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new Exception("Cannot identify the customer type");
         }
 
         return discount;
@@ -102,6 +90,8 @@ public class ShoppingService {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
+        // Compute total amount depending on the types and quantity of product and
+        // if we are in winter or summer discounts periods
         if (
             !(
                 cal.get(Calendar.DAY_OF_MONTH) < 15 &&
