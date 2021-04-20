@@ -27,12 +27,19 @@ public class ShoppingController {
 
     @PostMapping
     public String getPrice(@RequestBody Body b) {
+        final ShoppingService shoppingService = new ShoppingService();
         final BodyDto bodyDto = convertBodyToBodyDto(b);
 
-        return ShoppingService.getPrice(bodyDto);
+        return shoppingService.getPrice(bodyDto);
     }
 
+    /**
+     * Convert Body object to BodyDto object
+     * @param b Body object to convert
+     * @return BodyDto created from Body
+     */
     private BodyDto convertBodyToBodyDto(Body b){
+        // First we convert All Item object to ItemDto object and then we can create our BodyDto object
         final List<ItemDto> listItemDto = new ArrayList<>();
         for (Item i : b.getItems()) {
             listItemDto.add(new ItemDto(i.getType(), i.getNb()));

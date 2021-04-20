@@ -18,77 +18,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class ShoppingService {
 
-    public static String getPrice(BodyDto b) {
+    public String getPrice(BodyDto b) {
         double p = 0;
         double d;
 
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
-        cal.setTime(date);
-
-        // Compute discount for customer
-        if (b.getType().equals("STANDARD_CUSTOMER")) {
-            d = 1;
-        } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
-            d = 0.9;
-        } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
-            d = 0.5;
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (b.getItems() == null) {
+            return "0";
         }
 
-        // Compute total amount depending on the types and quantity of product and
-        // if we are in winter or summer discounts periods
-        if (
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 5
-            ) &&
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 0
-            )
-        ) {
-            if (b.getItems() == null) {
-                return "0";
-            }
-
-            for (int i = 0; i < b.getItems().length; i++) {
-                ItemDto it = b.getItems()[i];
-
-                if (it.getType().equals("TSHIRT")) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
-                    p += 50 * it.getNb() * d;
-                } else if (it.getType().equals("JACKET")) {
-                    p += 100 * it.getNb() * d;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
-        } else {
-            if (b.getItems() == null) {
-                return "0";
-            }
-
-            for (int i = 0; i < b.getItems().length; i++) {
-                ItemDto it = b.getItems()[i];
-
-                if (it.getType().equals("TSHIRT")) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
-                    p += 50 * it.getNb() * 0.8 * d;
-                } else if (it.getType().equals("JACKET")) {
-                    p += 100 * it.getNb() * 0.9 * d;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
-        }
+        d = this.calculateDiscountForCustomerType(b.getType());
+        p = this.calculatePrice(b.getItems(), d);
 
         try {
             if (b.getType().equals("STANDARD_CUSTOMER")) {
@@ -113,5 +52,80 @@ public class ShoppingService {
         }
 
         return String.valueOf(p);
+    }
+
+    /**
+     * Calculate the discount to apply based on given customer type
+     * @param type Customer type
+     * @return Discount calculated
+     */
+    private double calculateDiscountForCustomerType(String type){
+        double discount = 1;
+
+        // Compute discount for customer
+        if (type.equals("STANDARD_CUSTOMER")) {
+            discount = 1;
+        } else if (type.equals("PREMIUM_CUSTOMER")) {
+            discount = 0.9;
+        } else if (type.equals("PLATINUM_CUSTOMER")) {
+            discount = 0.5;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        return discount;
+    }
+
+    /**
+     * Calculate total price based on list of items and discount
+     * @param listItem List of items to use to calculte price
+     * @param discount Discount that can be applied to every items
+     * @return Price calculated
+     */
+    private double calculatePrice(ItemDto[] listItem, double discount){
+        double price = 0;
+
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+        cal.setTime(date);
+
+        if (
+            !(
+                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                cal.get(Calendar.MONTH) == 5
+            ) &&
+            !(
+                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                cal.get(Calendar.MONTH) == 0
+            )
+        ) {
+            for (int i = 0; i < listItem.length; i++) {
+                ItemDto it = listItem[i];
+
+                if (it.getType().equals("TSHIRT")) {
+                    price += 30 * it.getNb() * discount;
+                } else if (it.getType().equals("DRESS")) {
+                    price += 50 * it.getNb() * discount;
+                } else if (it.getType().equals("JACKET")) {
+                    price += 100 * it.getNb() * discount;
+                }
+            }
+        } else {
+            for (int i = 0; i < listItem.length; i++) {
+                ItemDto it = listItem[i];
+
+                if (it.getType().equals("TSHIRT")) {
+                    price += 30 * it.getNb() * discount;
+                } else if (it.getType().equals("DRESS")) {
+                    price += 50 * it.getNb() * 0.8 * discount;
+                } else if (it.getType().equals("JACKET")) {
+                    price += 100 * it.getNb() * 0.9 * discount;
+                }
+            }
+        }
+
+        return price;
     }
 }
