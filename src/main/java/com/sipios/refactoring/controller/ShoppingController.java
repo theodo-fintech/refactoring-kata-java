@@ -29,14 +29,14 @@ public class ShoppingController {
             return "0";
         }
         // TODO: bad names
-        double p = 0;
-        double d;
+        double price = 0;
+        double discount = 1;
 
 
         // TODO: type should be an enum
         // switch case
         // Compute discount for customer
-        d = b.getCustomer().getDiscount();
+        discount = b.getCustomer().getDiscount();
 
         // TODO: should be a function
         // Compute total amount depending on the types and quantity of product and
@@ -48,7 +48,7 @@ public class ShoppingController {
         if (!isDateDiscount()) {
             // TODO: foreach
             for (Item it : b.getItems()) {
-                p += it.getArticle().getPrice() * it.getNb() * d;
+                price += it.getArticle().getPrice() * it.getNb() * discount;
                 // else if (it.getType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getNb();
                 // }
@@ -56,7 +56,7 @@ public class ShoppingController {
         } else {
             // TODO: code duplication
             for (Item it : b.getItems()) {
-                p += it.getArticle().getPrice() * it.getNb() * it.getArticle().getSeasonal_discount() * d;
+                price += it.getArticle().getPrice() * it.getNb() * it.getArticle().getSeasonal_discount() * discount;
                 // else if (it.getType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getNb();
                 // }
@@ -64,15 +64,15 @@ public class ShoppingController {
         }
 
         try {
-            if (p > b.getCustomer().getThreshold()) {
-                throw new Exception("Price (" + p + ") is too high for this customer");
+            if (price > b.getCustomer().getThreshold()) {
+                throw new Exception("Price (" + price + ") is too high for this customer");
             }
         } catch (Exception e) {
             // TODO: could be a custom exception
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
-        return String.valueOf(p);
+        return String.valueOf(price);
     }
 
     public boolean isDateDiscount() {
