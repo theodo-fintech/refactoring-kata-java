@@ -25,6 +25,9 @@ public class ShoppingController {
     // Method is way too long, need to split it
     @PostMapping
     public String getPrice(@RequestBody Body b) {
+        if (b.getItems() == null) {
+            return "0";
+        }
         // TODO: bad names
         double p = 0;
         double d;
@@ -43,10 +46,6 @@ public class ShoppingController {
         // dangerous design for unit testing, behaviour can change depending on the date
         // date should be an argument which can be set
         if (!isDateDiscount()) {
-            // TODO: not clear (meaning?)
-            if (b.getItems() == null) {
-                return "0";
-            }
             // TODO: foreach
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
@@ -64,10 +63,6 @@ public class ShoppingController {
                 // }
             }
         } else {
-            // TODO: meaningless
-            if (b.getItems() == null) {
-                return "0";
-            }
             // TODO: code duplication
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
