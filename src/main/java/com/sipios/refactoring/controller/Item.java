@@ -1,6 +1,7 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.ItemType;
+import com.sipios.refactoring.article.Article;
 
 public
 
@@ -9,22 +10,22 @@ public
 class Item {
 
     // TODO: enum here
-    private ItemType type;
+    private Article article;
     private int nb;
 
     public Item() {}
 
-    public Item(ItemType type, int quantity) {
-        this.type = type;
+    public Item(Article a, int quantity) {
+        this.article = a;
         this.nb = quantity;
     }
 
-    public ItemType getType() {
-        return type;
+    public Article getArticle() {
+        return article;
     }
 
-    public void setType(ItemType type) {
-        this.type = type;
+    public void setArticle(Article a) {
+        this.article = a;
     }
 
     public int getNb() {

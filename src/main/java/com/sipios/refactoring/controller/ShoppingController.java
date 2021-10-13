@@ -48,14 +48,7 @@ public class ShoppingController {
         if (!isDateDiscount()) {
             // TODO: foreach
             for (Item it : b.getItems()) {
-                // TODO: item type should be an enum
-                if (it.getType().equals(ItemType.TSHIRT)) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals(ItemType.DRESS)) {
-                    p += 50 * it.getNb() * d;
-                } else if (it.getType().equals(ItemType.JACKET)) {
-                    p += 100 * it.getNb() * d;
-                }
+                p += it.getArticle().getPrice() * it.getNb() * d;
                 // else if (it.getType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getNb();
                 // }
@@ -63,13 +56,7 @@ public class ShoppingController {
         } else {
             // TODO: code duplication
             for (Item it : b.getItems()) {
-                if (it.getType().equals(ItemType.TSHIRT)) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals(ItemType.DRESS)) {
-                    p += 50 * it.getNb() * 0.8 * d;
-                } else if (it.getType().equals(ItemType.JACKET)) {
-                    p += 100 * it.getNb() * 0.9 * d;
-                }
+                p += it.getArticle().getPrice() * it.getNb() * it.getArticle().getSeasonal_discount() * d;
                 // else if (it.getType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getNb();
                 // }
