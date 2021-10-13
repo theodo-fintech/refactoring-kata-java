@@ -1,5 +1,6 @@
--git-ignore is broken
--no unit tests in general and no unit tests for ShoppingController
--several classes in ShoppingController.java
 -no documentation of the classes
 -body and item are bad names. Too generic
+
+Still todo:
+-more tests
+-some TODOs to resolve
