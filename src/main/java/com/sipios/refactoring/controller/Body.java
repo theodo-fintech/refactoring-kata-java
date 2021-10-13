@@ -1,17 +1,18 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.CustomerType;
+import com.sipios.refactoring.customer.Customer;
 
 // TODO: bad name
 public class Body {
 
     private Item[] items;
     // TODO: enum here
-    private CustomerType type;
+    private Customer customer;
 
-    public Body(Item[] is, CustomerType t) {
+    public Body(Item[] is, Customer c) {
         this.items = is;
-        this.type = t;
+        this.customer = c;
     }
 
     public Body() {}
@@ -24,11 +25,11 @@ public class Body {
         this.items = items;
     }
 
-    public CustomerType getType() {
-        return type;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setType(CustomerType type) {
-        this.type = type;
+    public void setCustomer(Customer c) {
+        this.customer = c;
     }
 }
