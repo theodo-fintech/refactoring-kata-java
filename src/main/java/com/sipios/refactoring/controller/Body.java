@@ -4,9 +4,7 @@ import com.sipios.refactoring.customer.Customer;
 
 // TODO: bad name
 public class Body {
-
     private Item[] items;
-    // TODO: enum here
     private Customer customer;
 
     public Body(Item[] is, Customer c) {

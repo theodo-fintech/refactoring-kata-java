@@ -27,7 +27,6 @@ public class ShoppingController {
         if (b.getItems() == null) {
             return "0";
         }
-        // TODO: bad names
         double price = 0;
         double discount = 1;
 
