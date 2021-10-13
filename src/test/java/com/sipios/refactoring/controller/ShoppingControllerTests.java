@@ -1,6 +1,5 @@
 package com.sipios.refactoring.controller;
 
-import com.sipios.refactoring.ItemType;
 import com.sipios.refactoring.UnitTest;
 import com.sipios.refactoring.article.DressArticle;
 import com.sipios.refactoring.article.JacketArticle;

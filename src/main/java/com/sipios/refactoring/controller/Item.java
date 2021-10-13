@@ -1,6 +1,5 @@
 package com.sipios.refactoring.controller;
 
-import com.sipios.refactoring.ItemType;
 import com.sipios.refactoring.article.Article;
 
 public
@@ -8,8 +7,6 @@ public
 
 // TODO: bad name
 class Item {
-
-    // TODO: enum here
     private Article article;
     private int nb;
 

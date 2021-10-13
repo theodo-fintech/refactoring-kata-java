@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.sipios.refactoring.ItemType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
