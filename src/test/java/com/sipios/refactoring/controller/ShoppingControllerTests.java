@@ -1,16 +1,13 @@
 package com.sipios.refactoring.controller;
 
-import com.sipios.refactoring.CustomerType;
 import com.sipios.refactoring.ItemType;
 import com.sipios.refactoring.UnitTest;
-import com.sipios.refactoring.customer.Customer;
 import com.sipios.refactoring.customer.PlatiniumCustomer;
 import com.sipios.refactoring.customer.PremiumCustomer;
 import com.sipios.refactoring.customer.StandardCustomer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.springframework.web.server.ResponseStatusException;
 
 class ShoppingControllerTests extends UnitTest {
 

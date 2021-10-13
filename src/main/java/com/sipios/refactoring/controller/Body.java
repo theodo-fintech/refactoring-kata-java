@@ -1,6 +1,5 @@
 package com.sipios.refactoring.controller;
 
-import com.sipios.refactoring.CustomerType;
 import com.sipios.refactoring.customer.Customer;
 
 // TODO: bad name
