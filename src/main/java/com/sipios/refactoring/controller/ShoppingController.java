@@ -47,9 +47,7 @@ public class ShoppingController {
         // date should be an argument which can be set
         if (!isDateDiscount()) {
             // TODO: foreach
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
-
+            for (Item it : b.getItems()) {
                 // TODO: item type should be an enum
                 if (it.getType().equals(ItemType.TSHIRT)) {
                     p += 30 * it.getNb() * d;
@@ -64,9 +62,7 @@ public class ShoppingController {
             }
         } else {
             // TODO: code duplication
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
-
+            for (Item it : b.getItems()) {
                 if (it.getType().equals(ItemType.TSHIRT)) {
                     p += 30 * it.getNb() * d;
                 } else if (it.getType().equals(ItemType.DRESS)) {
