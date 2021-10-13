@@ -16,10 +16,14 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/shopping")
 public class ShoppingController {
 
+    // TODO: not used
     private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
+    // TODO: no route value, should return an int
+    // Method is way too long, need to split it
     @PostMapping
     public String getPrice(@RequestBody Body b) {
+        // TODO: bad names
         double p = 0;
         double d;
 
@@ -27,6 +31,8 @@ public class ShoppingController {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
+        // TODO: type should be an enum
+        // switch case
         // Compute discount for customer
         if (b.getType().equals("STANDARD_CUSTOMER")) {
             d = 1;
@@ -35,11 +41,17 @@ public class ShoppingController {
         } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
             d = 0.5;
         } else {
+            // TODO: Exception unclear
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
+        // TODO: should be a function
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
+        // TODO: bad way too present if + repetition
+        // bad way to compare dates
+        // dangerous design for unit testing, behaviour can change depending on the date
+        // date should be an argument which can be set
         if (
             !(
                 cal.get(Calendar.DAY_OF_MONTH) < 15 &&
@@ -52,13 +64,15 @@ public class ShoppingController {
                 cal.get(Calendar.MONTH) == 0
             )
         ) {
+            // TODO: not clear (meaning?)
             if (b.getItems() == null) {
                 return "0";
             }
-
+            // TODO: foreach
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
 
+                // TODO: item type should be an enum
                 if (it.getType().equals("TSHIRT")) {
                     p += 30 * it.getNb() * d;
                 } else if (it.getType().equals("DRESS")) {
@@ -71,10 +85,11 @@ public class ShoppingController {
                 // }
             }
         } else {
+            // TODO: meaningless
             if (b.getItems() == null) {
                 return "0";
             }
-
+            // TODO: code duplication
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
 
@@ -110,6 +125,7 @@ public class ShoppingController {
                 }
             }
         } catch (Exception e) {
+            // TODO: could be a custom exception
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
@@ -117,9 +133,11 @@ public class ShoppingController {
     }
 }
 
+// TODO: bad name, should be in a seperate file
 class Body {
 
     private Item[] items;
+    // TODO: enum here
     private String type;
 
     public Body(Item[] is, String t) {
@@ -146,8 +164,10 @@ class Body {
     }
 }
 
+// TODO: bad name should be in a seperate file
 class Item {
 
+    // TODO: enum here
     private String type;
     private int nb;
 
