@@ -21,45 +21,16 @@ public class ShoppingController {
     private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
     // TODO: no route value, should return an int
-    // Method is way too long, need to split it
     @PostMapping
     public String getPrice(@RequestBody Body b) {
         if (b.getItems() == null) {
             return "0";
         }
         double price = 0;
-        double discount = 1;
 
-
-        // TODO: type should be an enum
-        // switch case
-        // Compute discount for customer
-        discount = b.getCustomer().getDiscount();
-
-        // TODO: should be a function
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
-        // TODO: bad way too present if + repetition
-        // bad way to compare dates
-        // dangerous design for unit testing, behaviour can change depending on the date
-        // date should be an argument which can be set
-        if (!isDateDiscount()) {
-            // TODO: foreach
-            for (Item it : b.getItems()) {
-                price += it.getArticle().getPrice() * it.getNb() * discount;
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
-        } else {
-            // TODO: code duplication
-            for (Item it : b.getItems()) {
-                price += it.getArticle().getPrice() * it.getNb() * it.getArticle().getSeasonal_discount() * discount;
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
-        }
+        price = calculatePrice(b, isDateDiscount());
 
         try {
             if (price > b.getCustomer().getThreshold()) {
