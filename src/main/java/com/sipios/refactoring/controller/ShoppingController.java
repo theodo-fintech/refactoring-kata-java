@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import com.sipios.refactoring.CustomerType;
+import com.sipios.refactoring.ItemType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -75,11 +76,11 @@ public class ShoppingController {
                 Item it = b.getItems()[i];
 
                 // TODO: item type should be an enum
-                if (it.getType().equals("TSHIRT")) {
+                if (it.getType().equals(ItemType.TSHIRT)) {
                     p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
+                } else if (it.getType().equals(ItemType.DRESS)) {
                     p += 50 * it.getNb() * d;
-                } else if (it.getType().equals("JACKET")) {
+                } else if (it.getType().equals(ItemType.JACKET)) {
                     p += 100 * it.getNb() * d;
                 }
                 // else if (it.getType().equals("SWEATSHIRT")) {
@@ -95,11 +96,11 @@ public class ShoppingController {
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
 
-                if (it.getType().equals("TSHIRT")) {
+                if (it.getType().equals(ItemType.TSHIRT)) {
                     p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
+                } else if (it.getType().equals(ItemType.DRESS)) {
                     p += 50 * it.getNb() * 0.8 * d;
-                } else if (it.getType().equals("JACKET")) {
+                } else if (it.getType().equals(ItemType.JACKET)) {
                     p += 100 * it.getNb() * 0.9 * d;
                 }
                 // else if (it.getType().equals("SWEATSHIRT")) {

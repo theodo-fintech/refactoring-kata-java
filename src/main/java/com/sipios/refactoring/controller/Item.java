@@ -1,5 +1,7 @@
 package com.sipios.refactoring.controller;
 
+import com.sipios.refactoring.ItemType;
+
 public
 
 
@@ -7,21 +9,21 @@ public
 class Item {
 
     // TODO: enum here
-    private String type;
+    private ItemType type;
     private int nb;
 
     public Item() {}
 
-    public Item(String type, int quantity) {
+    public Item(ItemType type, int quantity) {
         this.type = type;
         this.nb = quantity;
     }
 
-    public String getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ItemType type) {
         this.type = type;
     }
 

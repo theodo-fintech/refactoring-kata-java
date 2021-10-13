@@ -1,6 +1,7 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.CustomerType;
+import com.sipios.refactoring.ItemType;
 import com.sipios.refactoring.UnitTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -51,28 +52,28 @@ class ShoppingControllerTests extends UnitTest {
     @Test
     void testStandardCustomerTeeShirt() {
         Assertions.assertEquals("30.0",
-            controller.getPrice(new Body(new Item[] {new Item("TSHIRT", 1)}, CustomerType.STANDARD))
+            controller.getPrice(new Body(new Item[] {new Item(ItemType.TSHIRT, 1)}, CustomerType.STANDARD))
         );
     }
 
     @Test
     void testStandardCustomerDress() {
         Assertions.assertEquals("50.0",
-            controller.getPrice(new Body(new Item[] {new Item("DRESS", 1)}, CustomerType.STANDARD))
+            controller.getPrice(new Body(new Item[] {new Item(ItemType.DRESS, 1)}, CustomerType.STANDARD))
         );
     }
 
     @Test
     void testStandardCustomerJacket() {
         Assertions.assertEquals("100.0",
-            controller.getPrice(new Body(new Item[] {new Item("JACKET", 1)}, CustomerType.STANDARD))
+            controller.getPrice(new Body(new Item[] {new Item(ItemType.JACKET, 1)}, CustomerType.STANDARD))
         );
     }
 
     @Test
     void testStandardCustomerALotOfProducts() {
         Assertions.assertEquals("180.0",
-            controller.getPrice(new Body(new Item[] {new Item ("TSHIRT", 1), new Item("DRESS", 1), new Item("JACKET", 1)}, CustomerType.STANDARD))
+            controller.getPrice(new Body(new Item[] {new Item (ItemType.TSHIRT, 1), new Item(ItemType.DRESS, 1), new Item(ItemType.JACKET, 1)}, CustomerType.STANDARD))
         );
     }
 }
