@@ -30,9 +30,6 @@ public class ShoppingController {
         double p = 0;
         double d;
 
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
-        cal.setTime(date);
 
         // TODO: type should be an enum
         // switch case
@@ -55,18 +52,7 @@ public class ShoppingController {
         // bad way to compare dates
         // dangerous design for unit testing, behaviour can change depending on the date
         // date should be an argument which can be set
-        if (
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 5
-            ) &&
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 0
-            )
-        ) {
+        if (!isDateDiscount()) {
             // TODO: not clear (meaning?)
             if (b.getItems() == null) {
                 return "0";
@@ -133,5 +119,13 @@ public class ShoppingController {
         }
 
         return String.valueOf(p);
+    }
+
+    public boolean isDateDiscount() {
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+        cal.setTime(date);
+
+        return (cal.get(Calendar.DAY_OF_MONTH) < 15 && cal.get(Calendar.DAY_OF_MONTH) > 5 && (cal.get(Calendar.MONTH) == Calendar.JANUARY || cal.get(Calendar.MONTH) == Calendar.JUNE));
     }
 }
