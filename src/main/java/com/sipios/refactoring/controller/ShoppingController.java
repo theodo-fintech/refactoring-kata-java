@@ -80,4 +80,13 @@ public class ShoppingController {
 
         return (cal.get(Calendar.DAY_OF_MONTH) < 15 && cal.get(Calendar.DAY_OF_MONTH) > 5 && (cal.get(Calendar.MONTH) == Calendar.JANUARY || cal.get(Calendar.MONTH) == Calendar.JUNE));
     }
+
+    public double calculatePrice(Body b, boolean isSeasonalDiscount) {
+        double discount = b.getCustomer().getDiscount();
+        double price = 0;
+        for (Item it : b.getItems()) {
+            price += it.getArticle().getPrice() * it.getNb() * (1 - (isSeasonalDiscount ? 1 : 0) * it.getArticle().getSeasonal_discount()) * discount;
+        }
+        return price;
+    }
 }
