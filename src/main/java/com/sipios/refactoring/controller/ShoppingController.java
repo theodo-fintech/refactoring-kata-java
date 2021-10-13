@@ -132,38 +132,6 @@ public class ShoppingController {
         return String.valueOf(p);
     }
 }
-
-// TODO: bad name, should be in a seperate file
-class Body {
-
-    private Item[] items;
-    // TODO: enum here
-    private String type;
-
-    public Body(Item[] is, String t) {
-        this.items = is;
-        this.type = t;
-    }
-
-    public Body() {}
-
-    public Item[] getItems() {
-        return items;
-    }
-
-    public void setItems(Item[] items) {
-        this.items = items;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-}
-
 // TODO: bad name should be in a seperate file
 class Item {
 
