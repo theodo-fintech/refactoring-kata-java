@@ -3,9 +3,12 @@ package com.sipios.refactoring.controller;
 import com.sipios.refactoring.UnitTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
+@ExtendWith(MockitoExtension.class)
 class ShoppingControllerTests extends UnitTest {
 
     @InjectMocks
@@ -22,7 +25,7 @@ class ShoppingControllerTests extends UnitTest {
     @Test
     void shouldNotThrow() {
         Assertions.assertDoesNotThrow(
-            () -> controller.getPrice(new Body(new Item[] {}, "STANDARD_CUSTOMER"))
+            () -> controller.getPrice(new Body(new Item[] {}, STANDARD_CUSTOMER))
         );
     }
     
@@ -41,7 +44,7 @@ class ShoppingControllerTests extends UnitTest {
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
             () -> controller.getPrice(new Body(new Item[] {tshirt, dress, jacket}, STANDARD_CUSTOMER)));
 
-        Assertions.assertEquals(exception.getMessage(), "400 BAD_REQUEST \"Price (360.0) is too high for standard customer\"");
+        Assertions.assertEquals("400 BAD_REQUEST \"Price (360.0) is too high for standard customer\"", exception.getMessage());
     }
     
     @Test
@@ -53,7 +56,7 @@ class ShoppingControllerTests extends UnitTest {
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
             () -> controller.getPrice(new Body(new Item[] {tshirt, dress, jacket}, PREMIUM_CUSTOMER)));
 
-        Assertions.assertEquals(exception.getMessage(), "400 BAD_REQUEST \"Price (3240.0) is too high for premium customer\"");
+        Assertions.assertEquals("400 BAD_REQUEST \"Price (3240.0) is too high for premium customer\"", exception.getMessage());
     }
     
     @Test
@@ -65,7 +68,7 @@ class ShoppingControllerTests extends UnitTest {
         ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class,
             () -> controller.getPrice(new Body(new Item[] {tshirt, dress, jacket}, PLATINUM_CUSTOMER)));
 
-        Assertions.assertEquals(exception.getMessage(), "400 BAD_REQUEST \"Price (18000.0) is too high for platinum customer\"");
+        Assertions.assertEquals("400 BAD_REQUEST \"Price (18000.0) is too high for platinum customer\"", exception.getMessage());
     }
     
     @Test
