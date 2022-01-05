@@ -20,7 +20,7 @@ public class ShoppingService {
         }
 
         // Compute discount for customer
-        customerDiscount = getDiscountOnCustomerType(s.getType());
+        customerDiscount = getCustomerDiscount(s.getType());
 
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
@@ -28,8 +28,9 @@ public class ShoppingService {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
+        ShoppingItem it;
         for (int i = 0; i < s.getItems().length; i++) {
-            ShoppingItem it = s.getItems()[i];
+            it = s.getItems()[i];
             try {
                 priceShopping += getItemBasePrice(it)
                     * it.getNb()
@@ -42,7 +43,7 @@ public class ShoppingService {
         return priceShopping;
     }
 
-    private double getDiscountOnCustomerType(String type) throws Exception {
+    private double getCustomerDiscount(String type) throws Exception {
         switch (type) {
             case "STANDARD_CUSTOMER":
                 return 1;
