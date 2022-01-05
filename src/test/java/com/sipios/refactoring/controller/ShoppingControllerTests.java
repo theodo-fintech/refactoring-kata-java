@@ -1,6 +1,8 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.UnitTest;
+import com.sipios.refactoring.dto.ShoppingDetails;
+import com.sipios.refactoring.dto.ShoppingItem;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,7 +15,7 @@ class ShoppingControllerTests extends UnitTest {
     @Test
     void should_not_throw() {
         Assertions.assertDoesNotThrow(
-            () -> controller.getPrice(new Body(new Item[] {}, "STANDARD_CUSTOMER"))
+            () -> controller.getPrice(new ShoppingDetails(new ShoppingItem[] {}, "STANDARD_CUSTOMER"))
         );
     }
 }
