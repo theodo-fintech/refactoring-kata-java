@@ -1,13 +1,13 @@
 package com.sipios.refactoring.dto;
 
-import com.sipios.refactoring.dto.ShoppingItem;
+import com.sipios.refactoring.utils.enums.CustomerType;
 
 public class ShoppingDetails {
 
     private ShoppingItem[] items;
-    private String type;
+    private CustomerType type;
 
-    public ShoppingDetails(ShoppingItem[] items, String type) {
+    public ShoppingDetails(ShoppingItem[] items, CustomerType type) {
         this.items = items;
         this.type = type;
     }
@@ -22,11 +22,11 @@ public class ShoppingDetails {
         this.items = items;
     }
 
-    public String getType() {
+    public CustomerType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(CustomerType type) {
         this.type = type;
     }
 }

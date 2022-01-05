@@ -1,21 +1,23 @@
 package com.sipios.refactoring.dto;
 
+import com.sipios.refactoring.utils.enums.ShoppingItemType;
+
 public class ShoppingItem {
-    private String type;
+    private ShoppingItemType type;
     private int nb;
 
     public ShoppingItem() {}
 
-    public ShoppingItem(String type, int quantity) {
+    public ShoppingItem(ShoppingItemType type, int quantity) {
         this.type = type;
         this.nb = quantity;
     }
 
-    public String getType() {
+    public ShoppingItemType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ShoppingItemType type) {
         this.type = type;
     }
 

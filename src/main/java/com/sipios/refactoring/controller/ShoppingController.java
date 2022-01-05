@@ -34,15 +34,15 @@ public class ShoppingController {
         // Check if shopping price is too high for customer type
         try {
             switch (s.getType()) {
-                case "STANDARD_CUSTOMER":
+                case STANDARD_CUSTOMER:
                     if (p > 200) {
                         throw new Exception("Price (" + p + ") is too high for standard customer");
                     }
-                case "PREMIUM_CUSTOMER":
+                case PREMIUM_CUSTOMER:
                     if (p > 800) {
                         throw new Exception("Price (" + p + ") is too high for premium customer");
                     }
-                case "PLATINUM_CUSTOMER":
+                case PLATINUM_CUSTOMER:
                     if (p > 2000) {
                         throw new Exception("Price (" + p + ") is too high for platinum customer");
                     }

@@ -2,6 +2,7 @@ package com.sipios.refactoring.service;
 
 import com.sipios.refactoring.dto.ShoppingDetails;
 import com.sipios.refactoring.dto.ShoppingItem;
+import com.sipios.refactoring.utils.enums.CustomerType;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
@@ -43,13 +44,13 @@ public class ShoppingService {
         return priceShopping;
     }
 
-    private double getCustomerDiscount(String type) throws Exception {
+    private double getCustomerDiscount(CustomerType type) throws Exception {
         switch (type) {
-            case "STANDARD_CUSTOMER":
+            case STANDARD_CUSTOMER:
                 return 1;
-            case "PREMIUM_CUSTOMER":
+            case PREMIUM_CUSTOMER:
                 return 0.9;
-            case "PLATINUM_CUSTOMER":
+            case PLATINUM_CUSTOMER:
                 return 0.5;
             default:
                 throw new Exception("Invalid Customer type");
@@ -75,13 +76,13 @@ public class ShoppingService {
         }
 
         switch (it.getType()) {
-            case "TSHIRT":
+            case TSHIRT:
                 return 1;
-            case "DRESS":
+            case DRESS:
                 return 0.8;
-            case "JACKET":
+            case JACKET:
                 return 0.9;
-            // case "SWEATSHIRT":
+            // case SWEATSHIRT:
             //
             default:
                 throw new Exception("Invalid shopping item");
@@ -90,13 +91,13 @@ public class ShoppingService {
 
     private int getItemBasePrice(ShoppingItem it) throws Exception {
         switch (it.getType()) {
-            case "TSHIRT":
+            case TSHIRT:
                 return 30;
-            case "DRESS":
+            case DRESS:
                 return 50;
-            case "JACKET":
+            case JACKET:
                 return 100;
-            // case "SWEATSHIRT":
+            // case SWEATSHIRT:
             //      return 80;
             default:
                 throw new Exception("Invalid shopping item");
