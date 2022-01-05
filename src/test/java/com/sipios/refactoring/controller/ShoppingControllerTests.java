@@ -8,6 +8,7 @@ import com.sipios.refactoring.utils.enums.ShoppingItemType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.springframework.web.server.ResponseStatusException;
 
 class ShoppingControllerTests extends UnitTest {
 
@@ -31,6 +32,24 @@ class ShoppingControllerTests extends UnitTest {
         ShoppingItem tshirts = new ShoppingItem(ShoppingItemType.TSHIRT, 3);
         Assertions.assertDoesNotThrow(
             () -> controller.getPrice(new ShoppingDetails( new ShoppingItem[] {tshirts}, CustomerType.PLATINUM_CUSTOMER))
+        );
+
+    }
+
+    @Test
+    void should_throw_if_exceeds_customer_max_price() {
+        ShoppingItem jackets = new ShoppingItem(ShoppingItemType.JACKET, 5);
+
+        Assertions.assertDoesNotThrow(
+            () -> controller.getPrice(new ShoppingDetails( new ShoppingItem[] {jackets}, CustomerType.PLATINUM_CUSTOMER))
+        );
+
+        Assertions.assertDoesNotThrow(
+            () -> controller.getPrice(new ShoppingDetails( new ShoppingItem[] {jackets}, CustomerType.PREMIUM_CUSTOMER))
+        );
+
+        Assertions.assertThrows(ResponseStatusException.class,
+            () -> controller.getPrice(new ShoppingDetails( new ShoppingItem[] {jackets}, CustomerType.STANDARD_CUSTOMER))
         );
 
     }
