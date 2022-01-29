@@ -5,25 +5,43 @@ import java.util.Date;
 import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+// https://stackoverflow.com/questions/11887799/how-to-mock-new-date-in-java-using-mockito
+interface DateTime {
+    Date getDate();
+}
+
+@Component
+class DateTimeImpl implements DateTime {
+    @Override
+    public Date getDate() {
+       return new Date();
+    }
+}
+
 @RestController
 @RequestMapping("/shopping")
 public class ShoppingController {
 
     private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
+    
+    @Autowired
+    private DateTime dateTime;
 
     @PostMapping
     public String getPrice(@RequestBody Body b) {
         double p = 0;
         double d;
 
-        Date date = new Date();
+        Date date = dateTime.getDate();
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
