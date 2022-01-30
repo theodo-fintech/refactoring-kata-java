@@ -36,73 +36,49 @@ public class ShoppingController {
     @Autowired
     private DateTime dateTime;
 
+    private boolean isDiscoutnedPeriod(Calendar cal){
+
+        // between the 5 and 15 of january an may
+        return ((
+                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                cal.get(Calendar.MONTH) == 5
+            ) ||
+            (
+                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                cal.get(Calendar.MONTH) == 0
+            ));
+    }
+
     @PostMapping
     public String getPrice(@RequestBody Body b) {
 
-        double p = 0;
-        double d = b.getType().getDiscount();
+        // empty cart is free
+        if (b.getItems() == null) {
+            return "0";
+        }
+
+        double totalPrice = 0;
+        double customerDiscount = b.getType().getDiscount();
 
         Date date = dateTime.getDate();
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
-        // Compute total amount depending on the types and quantity of product and
-        // if we are in winter or summer discounts periods
-        if (
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 5
-            ) &&
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 0
-            )
-        ) {
-            if (b.getItems() == null) {
-                return "0";
-            }
 
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
+        for (int i = 0; i < b.getItems().length; i++) {
 
-                p += it.getType().getPrice() * it.getNb() * d;
-            }
-        } else {
-            if (b.getItems() == null) {
-                return "0";
-            }
-
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
-                p += it.getType().getDiscountedPrice() * it.getNb() * d;
-            }
+            Item it = b.getItems()[i];
+            double itemPrice = this.isDiscoutnedPeriod(cal) ? it.getType().getDiscountedPrice() : it.getType().getPrice();
+            totalPrice += itemPrice * it.getNb() * customerDiscount;
+        }
+        
+        if (totalPrice > b.getType().getMaxSpending()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price (" + totalPrice + ") is too high for " + b.getType().getName());
         }
 
-        try {
-            if (b.getType().equals(CustomerType.STANDARD_CUSTOMER)) {
-                if (p > 200) {
-                    throw new Exception("Price (" + p + ") is too high for standard customer");
-                }
-            } else if (b.getType().equals(CustomerType.PREMIUM_CUSTOMER)) {
-                if (p > 800) {
-                    throw new Exception("Price (" + p + ") is too high for premium customer");
-                }
-            } else if (b.getType().equals(CustomerType.PLATINUM_CUSTOMER)) {
-                if (p > 2000) {
-                    throw new Exception("Price (" + p + ") is too high for platinum customer");
-                }
-            } else {
-                if (p > 200) {
-                    throw new Exception("Price (" + p + ") is too high for standard customer");
-                }
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-
-        return String.valueOf(p);
+        return String.valueOf(totalPrice);
     }
 }
 
@@ -110,7 +86,7 @@ enum CustomerType{
 
     STANDARD_CUSTOMER(1,200, "standard customer"),
     PREMIUM_CUSTOMER(0.9,800, "premium customer"),
-    PLATINUM_CUSTOMER(0.5, 2000, "platinium customer");
+    PLATINUM_CUSTOMER(0.5, 2000, "platinum customer");
 
     private double discount;
     private double maxSpending;
