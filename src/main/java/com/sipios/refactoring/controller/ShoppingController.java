@@ -38,23 +38,13 @@ public class ShoppingController {
 
     @PostMapping
     public String getPrice(@RequestBody Body b) {
+
         double p = 0;
-        double d;
+        double d = b.getType().getDiscount();
 
         Date date = dateTime.getDate();
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
-
-        // Compute discount for customer
-        if (b.getType().equals("STANDARD_CUSTOMER")) {
-            d = 1;
-        } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
-            d = 0.9;
-        } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
-            d = 0.5;
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
 
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
@@ -77,16 +67,7 @@ public class ShoppingController {
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
 
-                if (it.getType().equals("TSHIRT")) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
-                    p += 50 * it.getNb() * d;
-                } else if (it.getType().equals("JACKET")) {
-                    p += 100 * it.getNb() * d;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
+                p += it.getType().getPrice() * it.getNb() * d;
             }
         } else {
             if (b.getItems() == null) {
@@ -95,30 +76,20 @@ public class ShoppingController {
 
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
-
-                if (it.getType().equals("TSHIRT")) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
-                    p += 50 * it.getNb() * 0.8 * d;
-                } else if (it.getType().equals("JACKET")) {
-                    p += 100 * it.getNb() * 0.9 * d;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
+                p += it.getType().getDiscountedPrice() * it.getNb() * d;
             }
         }
 
         try {
-            if (b.getType().equals("STANDARD_CUSTOMER")) {
+            if (b.getType().equals(CustomerType.STANDARD_CUSTOMER)) {
                 if (p > 200) {
                     throw new Exception("Price (" + p + ") is too high for standard customer");
                 }
-            } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+            } else if (b.getType().equals(CustomerType.PREMIUM_CUSTOMER)) {
                 if (p > 800) {
                     throw new Exception("Price (" + p + ") is too high for premium customer");
                 }
-            } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+            } else if (b.getType().equals(CustomerType.PLATINUM_CUSTOMER)) {
                 if (p > 2000) {
                     throw new Exception("Price (" + p + ") is too high for platinum customer");
                 }
@@ -135,12 +106,46 @@ public class ShoppingController {
     }
 }
 
+enum CustomerType{
+
+    STANDARD_CUSTOMER(1,200, "standard customer"),
+    PREMIUM_CUSTOMER(0.9,800, "premium customer"),
+    PLATINUM_CUSTOMER(0.5, 2000, "platinium customer");
+
+    private double discount;
+    private double maxSpending;
+    private String name;
+
+    public double getDiscount()
+    {
+        return this.discount;
+    }
+
+    public double getMaxSpending()
+    {
+        return this.maxSpending;
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
+
+    private CustomerType(double discount, double maxSpending, String name)
+    {
+        this.discount = discount;
+        this.maxSpending = maxSpending;
+        this.name = name;
+    }
+
+}
+
 class Body {
 
     private Item[] items;
-    private String type;
+    private CustomerType type;
 
-    public Body(Item[] is, String t) {
+    public Body(Item[] is, CustomerType t) {
         this.items = is;
         this.type = t;
     }
@@ -155,32 +160,58 @@ class Body {
         this.items = items;
     }
 
-    public String getType() {
+    public CustomerType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(CustomerType type) {
         this.type = type;
+    }
+}
+
+enum ItemType{
+    
+    TSHIRT(30, 30),
+    DRESS(50, 50*0.8),
+    JACKET(100, 100*0.9);
+
+    private double price;
+    private double discountedPrice;
+
+    public double getPrice()
+    {
+        return this.price;
+    }
+
+    public double getDiscountedPrice()
+    {
+        return this.discountedPrice;
+    }
+
+    private ItemType(double price, double discountedPrice)
+    {
+        this.price = price;
+        this.discountedPrice = discountedPrice;
     }
 }
 
 class Item {
 
-    private String type;
+    private ItemType type;
     private int nb;
 
     public Item() {}
 
-    public Item(String type, int quantity) {
+    public Item(ItemType type, int quantity) {
         this.type = type;
         this.nb = quantity;
     }
 
-    public String getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ItemType type) {
         this.type = type;
     }
 

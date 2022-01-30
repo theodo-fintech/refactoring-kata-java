@@ -31,12 +31,12 @@ class ShoppingControllerTests extends UnitTest {
     @BeforeAll
     public static void setUp(){
 
-        oneTshirt = new Item("TSHIRT", 1);
-        oneDress = new Item("DRESS", 1);
-        oneJacket = new Item("JACKET", 1);
-        tenTshirts = new Item("TSHIRT", 10);
-        tenDresses = new Item("DRESS", 10);
-        tenJackets = new Item("JACKET", 10);
+        oneTshirt = new Item(ItemType.TSHIRT, 1);
+        oneDress = new Item(ItemType.DRESS, 1);
+        oneJacket = new Item(ItemType.JACKET, 1);
+        tenTshirts = new Item(ItemType.TSHIRT, 10);
+        tenDresses = new Item(ItemType.DRESS, 10);
+        tenJackets = new Item(ItemType.JACKET, 10);
     }
 
 
@@ -46,13 +46,13 @@ class ShoppingControllerTests extends UnitTest {
         Mockito.when(mockDateTime.getDate()).thenReturn(new Date(0));
 
         Assertions.assertEquals(
-            0.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {}, "STANDARD_CUSTOMER")))
+            0.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {}, CustomerType.STANDARD_CUSTOMER)))
         );
         Assertions.assertEquals(
-            0.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {}, "PREMIUM_CUSTOMER")))
+            0.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {}, CustomerType.PREMIUM_CUSTOMER)))
         );
         Assertions.assertEquals(
-            0.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {}, "PLATINUM_CUSTOMER")))
+            0.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {}, CustomerType.PLATINUM_CUSTOMER)))
         );
     }
 
@@ -62,13 +62,13 @@ class ShoppingControllerTests extends UnitTest {
         Mockito.when(mockDateTime.getDate()).thenReturn(new Date(0));
 
         Assertions.assertEquals(
-            30.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, "STANDARD_CUSTOMER")))
+            30.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, CustomerType.STANDARD_CUSTOMER)))
         );
         Assertions.assertEquals(
-            27.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, "PREMIUM_CUSTOMER")))
+            27.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, CustomerType.PREMIUM_CUSTOMER)))
         );
         Assertions.assertEquals(
-            15.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, "PLATINUM_CUSTOMER")))
+            15.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, CustomerType.PLATINUM_CUSTOMER)))
         );
     }
 
@@ -78,13 +78,13 @@ class ShoppingControllerTests extends UnitTest {
         Mockito.when(mockDateTime.getDate()).thenReturn(new Date(0));
 
         Assertions.assertEquals(
-            30.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, "STANDARD_CUSTOMER")))
+            30.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, CustomerType.STANDARD_CUSTOMER)))
         );
         Assertions.assertEquals(
-            50.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneDress}, "STANDARD_CUSTOMER")))
+            50.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneDress}, CustomerType.STANDARD_CUSTOMER)))
         );
         Assertions.assertEquals(
-            100.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneJacket}, "STANDARD_CUSTOMER")))
+            100.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneJacket}, CustomerType.STANDARD_CUSTOMER)))
         );
     }
 
@@ -94,13 +94,13 @@ class ShoppingControllerTests extends UnitTest {
         Mockito.when(mockDateTime.getDate()).thenReturn(new SimpleDateFormat("yyyy-MM-dd").parse("2022-01-14"));
 
         Assertions.assertEquals(
-            30.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, "STANDARD_CUSTOMER")))
+            30.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneTshirt}, CustomerType.STANDARD_CUSTOMER)))
         );
         Assertions.assertEquals(
-            40.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneDress}, "STANDARD_CUSTOMER")))
+            40.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneDress}, CustomerType.STANDARD_CUSTOMER)))
         );
         Assertions.assertEquals(
-            90.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneJacket}, "STANDARD_CUSTOMER")))
+            90.0 , Double.parseDouble(controller.getPrice(new Body(new Item[] {oneJacket}, CustomerType.STANDARD_CUSTOMER)))
         );
     }
 
@@ -110,17 +110,17 @@ class ShoppingControllerTests extends UnitTest {
         Mockito.when(mockDateTime.getDate()).thenReturn(new Date(0));
 
         Throwable exception = Assertions.assertThrows(
-            Exception.class , () -> controller.getPrice(new Body(new Item[] {tenTshirts}, "STANDARD_CUSTOMER"))
+            Exception.class , () -> controller.getPrice(new Body(new Item[] {tenTshirts}, CustomerType.STANDARD_CUSTOMER))
         );
         Assertions.assertEquals("400 BAD_REQUEST \"Price (300.0) is too high for standard customer\"", exception.getMessage());
 
         Throwable exception2 = Assertions.assertThrows(
-            Exception.class , () -> controller.getPrice(new Body(new Item[] {tenDresses, tenJackets}, "PREMIUM_CUSTOMER"))
+            Exception.class , () -> controller.getPrice(new Body(new Item[] {tenDresses, tenJackets}, CustomerType.PREMIUM_CUSTOMER))
         );
         Assertions.assertEquals("400 BAD_REQUEST \"Price (1350.0) is too high for premium customer\"", exception2.getMessage());
 
         Throwable exception3 = Assertions.assertThrows(
-            Exception.class , () -> controller.getPrice(new Body(new Item[] {tenJackets,tenJackets, tenJackets, tenJackets, tenJackets}, "PLATINUM_CUSTOMER"))
+            Exception.class , () -> controller.getPrice(new Body(new Item[] {tenJackets,tenJackets, tenJackets, tenJackets, tenJackets}, CustomerType.PLATINUM_CUSTOMER))
         );
         Assertions.assertEquals("400 BAD_REQUEST \"Price (2500.0) is too high for platinum customer\"", exception3.getMessage());
 
