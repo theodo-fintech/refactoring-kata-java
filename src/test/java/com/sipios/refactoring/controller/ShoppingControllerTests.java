@@ -1,9 +1,13 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.UnitTest;
+import com.sipios.refactoring.models.CalculatePriceRequest;
+import com.sipios.refactoring.models.Item;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+
+import static com.sipios.refactoring.models.CalculatePriceRequestType.STANDARD_CUSTOMER;
 
 class ShoppingControllerTests extends UnitTest {
 
@@ -13,7 +17,7 @@ class ShoppingControllerTests extends UnitTest {
     @Test
     void should_not_throw() {
         Assertions.assertDoesNotThrow(
-            () -> controller.getPrice(new Body(new Item[] {}, "STANDARD_CUSTOMER"))
+            () -> controller.getPrice(new CalculatePriceRequest(new Item[] {}, STANDARD_CUSTOMER))
         );
     }
 }
