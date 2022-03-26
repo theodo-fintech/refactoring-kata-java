@@ -4,9 +4,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.sipios.refactoring.models.dtos.Body;
+import com.sipios.refactoring.models.dtos.ShoppingCartRequest;
+import com.sipios.refactoring.services.PriceService;
+import com.sipios.refactoring.services.PriceServiceLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,28 +20,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/shopping")
+@Import(PriceServiceLocal.class)
 public class ShoppingController {
 
+    PriceService priceService;
+    public ShoppingController(@Autowired PriceService priceService) {
+        this.priceService = priceService;
+    }
+
     private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
-
-    private static final Map<String,Double> customerPlanDiscounts = Stream.of(new Object[][] {
-        { "STANDARD_CUSTOMER", 1d },
-        { "PREMIUM_CUSTOMER", 0.9d },
-        { "PLATINUM_CUSTOMER", 0.5d }
-    }).collect(Collectors.toMap(data -> (String) data[0], data -> (Double) data[1]));
-
-    private static final Map<String,Double> lowSeasonDiscounts = Stream.of(new Object[][] {
-        { "TSHIRT", 1d },
-        { "DRESS", 0.9d },
-        { "JACKET", 0.5d }
-    }).collect(Collectors.toMap(data -> (String) data[0], data -> (Double) data[1]));
-
-
-    private static final Map<String,Double> itemPriceList = Stream.of(new Object[][] {
-        { "TSHIRT", 30d },
-        { "DRESS", 50d },
-        { "JACKET", 100d }
-    }).collect(Collectors.toMap(data -> (String) data[0], data -> (Double) data[1]));
 
     private static final Map<String,String> logCustomerType = Stream.of(new Object[][] {
         { "STANDARD_CUSTOMER", "standard" },
@@ -52,57 +43,15 @@ public class ShoppingController {
     }).collect(Collectors.toMap(data -> (String) data[0], data -> (Double) data[1]));
 
 
-    private double computeDiscount(String type){
-        if ( !customerPlanDiscounts.containsKey(type)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }else {
-            return customerPlanDiscounts.get(type).doubleValue();
-        }
-    }
-
-    private boolean isSeasonalDiscountPeriod(Calendar cal){
-        return !(
-        cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-        cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-        cal.get(Calendar.MONTH) == Calendar.JUNE
-            ) &&
-                !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-        cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-        cal.get(Calendar.MONTH) == Calendar.JANUARY
-            ) ;
-    }
     @PostMapping
-    public String getPrice(@RequestBody Body b) {
-        if (b.getItems() == null || b.getItems().length == 0) {
+    public String getPrice(@RequestBody ShoppingCartRequest cartRequest) {
+        if (cartRequest.getItems() == null || cartRequest.getItems().length == 0) {
             return "0";
         }
-        double totalPrice = 0;
-        double discount;
+        double totalPrice = priceService.getTotalPrice(cartRequest);
 
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
-        cal.setTime(date);
-
-        discount = computeDiscount(b.getType());
-
-        // Compute total amount depending on the types and quantity of product and
-        // if we are in winter or summer discounts periods
-        if (isSeasonalDiscountPeriod(cal)) {
-
-
-            totalPrice = Arrays.stream(b.getItems())
-                .mapToDouble(item -> itemPriceList.getOrDefault(item.getType(), 0d) * item.getNb() * discount)
-                .sum();
-
-        } else {
-            totalPrice = Arrays.stream(b.getItems())
-                .mapToDouble(item -> itemPriceList.getOrDefault(item.getType(), 0d) * item.getNb() * discount * lowSeasonDiscounts.getOrDefault(item.getType(),1d))
-                .sum();
-        }
-
-        if (totalPrice > customerLimitPrice.getOrDefault(b.getType(),customerLimitPrice.get("STANDARD_CUSTOMER"))){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price (" + totalPrice + ") is too high for " + logCustomerType.getOrDefault(b.getType(),logCustomerType.get("STANDARD_CUSTOMER")));
+        if (totalPrice > customerLimitPrice.getOrDefault(cartRequest.getType(),customerLimitPrice.get("STANDARD_CUSTOMER"))){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price (" + totalPrice + ") is too high for " + logCustomerType.getOrDefault(cartRequest.getType(),logCustomerType.get("STANDARD_CUSTOMER")));
         }
 
         return String.valueOf(totalPrice);

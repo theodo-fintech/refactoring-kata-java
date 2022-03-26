@@ -1,14 +1,14 @@
 package com.sipios.refactoring.models.dtos;
 
-public class Item {
+public class CartItem {
 
     private String type;
     private int nb;
 
-    public Item() {
+    public CartItem() {
     }
 
-    public Item(String type, int quantity) {
+    public CartItem(String type, int quantity) {
         this.type = type;
         this.nb = quantity;
     }
