@@ -3,14 +3,14 @@ package com.sipios.refactoring.model;
 public class Item {
 
     private String type;
-    private int nb;
+    private int quantity;
 
     public Item() {
     }
 
     public Item(String type, int quantity) {
         this.type = type;
-        this.nb = quantity;
+        this.quantity = quantity;
     }
 
     public String getType() {
@@ -21,11 +21,11 @@ public class Item {
         this.type = type;
     }
 
-    public int getNb() {
-        return nb;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setNb(int nb) {
-        this.nb = nb;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
