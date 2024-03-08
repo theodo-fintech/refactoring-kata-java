@@ -23,12 +23,10 @@ public class ShoppingServiceImpl implements ShoppingService {
         double price = 0;
         double discount;
 
-        // localDate
         Date date = new Date();
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
-        // enum switch case + inverser
         // Compute discount for customer
         if (body.getClientType().equals("STANDARD_CUSTOMER")) {
             discount = 1;
@@ -40,7 +38,6 @@ public class ShoppingServiceImpl implements ShoppingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        // sous methode + enlever if et garder que ce qu'il y a dedans
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
         if (
