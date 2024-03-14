@@ -38,4 +38,12 @@ class ShoppingControllerTests extends UnitTest {
         var price = controller.getPrice(body);
         assertThat(price).isEqualTo("0");
     }
+
+    @Test
+    void should_return_zero_when_items_are_not_found() {
+        var items = new Item[]{new Item("UNKNOWN", 1)};
+        var body = new Body(items, "STANDARD_CUSTOMER");
+        var price = controller.getPrice(body);
+        assertThat(price).isEqualTo("0.0");
+    }
 }
