@@ -33,6 +33,10 @@ public class ShoppingController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
+        if (b.getItems() == null) {
+            return "0";
+        }
+
         double p = 0;
 
         Date date = new Date();
@@ -52,10 +56,6 @@ public class ShoppingController {
                 cal.get(Calendar.MONTH) == 0
             )
         ) {
-            if (b.getItems() == null) {
-                return "0";
-            }
-
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
 
@@ -71,9 +71,6 @@ public class ShoppingController {
                 // }
             }
         } else {
-            if (b.getItems() == null) {
-                return "0";
-            }
 
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
