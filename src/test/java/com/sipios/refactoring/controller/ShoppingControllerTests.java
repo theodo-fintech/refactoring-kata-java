@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ShoppingControllerTests extends UnitTest {
 
@@ -95,5 +96,28 @@ class ShoppingControllerTests extends UnitTest {
         var body = new Body(items, customerType);
         var price = testableController.getPrice(body);
         assertThat(price).isEqualTo(expectedPrice);
+    }
+
+    public static Stream<Arguments> totalPriceThresholdExceededPerCustomerTypeTestCases() {
+        return Stream.of(
+            Arguments.of("STANDARD_CUSTOMER", "JACKET", 3, "Price (270.0) is too high for standard customer"),
+            Arguments.of("PREMIUM_CUSTOMER", "JACKET", 10, "Price (810.0) is too high for premium customer"),
+            Arguments.of("PLATINUM_CUSTOMER", "JACKET", 50, "Price (2250.0) is too high for platinum customer")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("totalPriceThresholdExceededPerCustomerTypeTestCases")
+    void should_throw_when_total_price_per_customer_type_threshold_is_exceeded(String customerType,
+                                                                               String itemType,
+                                                                               int quantity,
+                                                                               String expectedMessage) {
+        assertThatThrownBy(() -> {
+            var items = new Item[]{new Item(itemType, quantity)};
+            var body = new Body(items, customerType);
+            controller.getPrice(body);
+        })
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(expectedMessage);
     }
 }
