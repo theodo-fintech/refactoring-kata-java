@@ -39,23 +39,9 @@ public class ShoppingController {
 
         double p = 0;
 
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
-        cal.setTime(date);
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
-        if (
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 5
-            ) &&
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 0
-            )
-        ) {
+        if (isNotWinterOrSummerDiscountsPeriods()) {
             for (int i = 0; i < b.getItems().length; i++) {
                 Item it = b.getItems()[i];
 
@@ -111,6 +97,23 @@ public class ShoppingController {
         }
 
         return String.valueOf(p);
+    }
+
+    protected boolean isNotWinterOrSummerDiscountsPeriods() {
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+        cal.setTime(date);
+
+        return !(
+            cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                cal.get(Calendar.MONTH) == 5
+        ) &&
+            !(
+                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                    cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                    cal.get(Calendar.MONTH) == 0
+            );
     }
 }
 
