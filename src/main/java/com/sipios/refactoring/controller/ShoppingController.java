@@ -2,6 +2,7 @@ package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.pricing.CustomerPlan;
 import com.sipios.refactoring.pricing.Discounts;
+import com.sipios.refactoring.pricing.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Clock;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/shopping")
@@ -34,19 +36,8 @@ public class ShoppingController {
             double price = 0;
 
             for (int i = 0; i < body.getItems().length; i++) {
-                Item it = body.getItems()[i];
-
-                switch (it.getType()) {
-                    case "TSHIRT":
-                        price += 30 * it.getNb() * applyItemTypeDiscount("TSHIRT") * customerPlan.getDiscount();
-                        break;
-                    case "DRESS":
-                        price += 50 * it.getNb() * applyItemTypeDiscount("DRESS") * customerPlan.getDiscount();
-                        break;
-                    case "JACKET":
-                        price += 100 * it.getNb() * applyItemTypeDiscount("JACKET") * customerPlan.getDiscount();
-                        break;
-                }
+                Item item = body.getItems()[i];
+                price = addProductPrice(item, price, customerPlan);
             }
 
             try {
@@ -64,10 +55,19 @@ public class ShoppingController {
         }
     }
 
+    private double addProductPrice(Item item, double price, CustomerPlan customerPlan) {
+        var product = Product.findByName(item.getType());
+        if (product.isPresent()) {
+            var unitPrice = product.get().getPrice();
+            price += unitPrice * item.getNb() * applyItemTypeDiscount(item.getType()) * customerPlan.getDiscount();
+        }
+        return price;
+    }
+
     private double applyItemTypeDiscount(String itemType) {
-       return Discounts.findItemTypeDiscount(itemType, clock)
-           .map(Discounts::getDiscount)
-           .orElse(1d);
+        return Discounts.findItemTypeDiscount(itemType, clock)
+            .map(Discounts::getDiscount)
+            .orElse(1d);
     }
 }
 
