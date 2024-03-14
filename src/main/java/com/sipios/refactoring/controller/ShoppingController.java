@@ -1,10 +1,8 @@
 package com.sipios.refactoring.controller;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sipios.refactoring.pricing.CustomerPlan;
+import com.sipios.refactoring.pricing.Discounts;
+import com.sipios.refactoring.pricing.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,108 +10,64 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Clock;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/shopping")
 public class ShoppingController {
 
-    private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
+    private final Clock clock;
+
+    public ShoppingController(Clock clock) {
+        this.clock = clock;
+    }
 
     @PostMapping
-    public String getPrice(@RequestBody Body b) {
-        double p = 0;
-        double d;
-
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
-        cal.setTime(date);
-
-        // Compute discount for customer
-        if (b.getType().equals("STANDARD_CUSTOMER")) {
-            d = 1;
-        } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
-            d = 0.9;
-        } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
-            d = 0.5;
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        // Compute total amount depending on the types and quantity of product and
-        // if we are in winter or summer discounts periods
-        if (
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 5
-            ) &&
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                cal.get(Calendar.MONTH) == 0
-            )
-        ) {
-            if (b.getItems() == null) {
-                return "0";
-            }
-
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
-
-                if (it.getType().equals("TSHIRT")) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
-                    p += 50 * it.getNb() * d;
-                } else if (it.getType().equals("JACKET")) {
-                    p += 100 * it.getNb() * d;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
-        } else {
-            if (b.getItems() == null) {
-                return "0";
-            }
-
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
-
-                if (it.getType().equals("TSHIRT")) {
-                    p += 30 * it.getNb() * d;
-                } else if (it.getType().equals("DRESS")) {
-                    p += 50 * it.getNb() * 0.8 * d;
-                } else if (it.getType().equals("JACKET")) {
-                    p += 100 * it.getNb() * 0.9 * d;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
-        }
+    public String getPrice(@RequestBody Body body) {
 
         try {
-            if (b.getType().equals("STANDARD_CUSTOMER")) {
-                if (p > 200) {
-                    throw new Exception("Price (" + p + ") is too high for standard customer");
-                }
-            } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
-                if (p > 800) {
-                    throw new Exception("Price (" + p + ") is too high for premium customer");
-                }
-            } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
-                if (p > 2000) {
-                    throw new Exception("Price (" + p + ") is too high for platinum customer");
-                }
-            } else {
-                if (p > 200) {
-                    throw new Exception("Price (" + p + ") is too high for standard customer");
-                }
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+            var customerPlan = CustomerPlan.valueOf(body.getType());
 
-        return String.valueOf(p);
+            if (body.getItems() == null) {
+                return "0";
+            }
+
+            double price = 0;
+
+            for (int i = 0; i < body.getItems().length; i++) {
+                Item item = body.getItems()[i];
+                price = addProductPrice(item, price, customerPlan);
+            }
+
+            try {
+                if (price > customerPlan.getTotalPriceThreshold()) {
+                    throw new Exception("Price (" + price + ") is too high for " + customerPlan.getLabel() + " customer");
+                }
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            }
+
+            return String.valueOf(price);
+
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private double addProductPrice(Item item, double price, CustomerPlan customerPlan) {
+        var product = Product.findByName(item.getType());
+        if (product.isPresent()) {
+            var unitPrice = product.get().getPrice();
+            price += unitPrice * item.getNb() * applyItemTypeDiscount(item.getType()) * customerPlan.getDiscount();
+        }
+        return price;
+    }
+
+    private double applyItemTypeDiscount(String itemType) {
+        return Discounts.findItemTypeDiscount(itemType, clock)
+            .map(Discounts::getDiscount)
+            .orElse(1d);
     }
 }
 
@@ -127,7 +81,8 @@ class Body {
         this.type = t;
     }
 
-    public Body() {}
+    public Body() {
+    }
 
     public Item[] getItems() {
         return items;
@@ -151,7 +106,8 @@ class Item {
     private String type;
     private int nb;
 
-    public Item() {}
+    public Item() {
+    }
 
     public Item(String type, int quantity) {
         this.type = type;
