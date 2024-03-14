@@ -20,12 +20,7 @@ public class ShoppingController {
 
     @PostMapping
     public String getPrice(@RequestBody Body b) {
-        double p = 0;
         double d;
-
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
-        cal.setTime(date);
 
         // Compute discount for customer
         if (b.getType().equals("STANDARD_CUSTOMER")) {
@@ -38,6 +33,11 @@ public class ShoppingController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
+        double p = 0;
+
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+        cal.setTime(date);
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
         if (

@@ -4,6 +4,7 @@ import com.sipios.refactoring.UnitTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.springframework.web.server.ResponseStatusException;
 
 class ShoppingControllerTests extends UnitTest {
 
@@ -11,9 +12,9 @@ class ShoppingControllerTests extends UnitTest {
     private ShoppingController controller;
 
     @Test
-    void should_not_throw() {
-        Assertions.assertDoesNotThrow(
-            () -> controller.getPrice(new Body(new Item[] {}, "STANDARD_CUSTOMER"))
+    void should_throw_when_customer_type_is_unknown() {
+        Assertions.assertThrows(ResponseStatusException.class,
+            () -> controller.getPrice(new Body(new Item[] {}, "UNKNOWN"))
         );
     }
 }
