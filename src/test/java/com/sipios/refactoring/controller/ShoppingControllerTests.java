@@ -3,15 +3,27 @@ package com.sipios.refactoring.controller;
 import com.sipios.refactoring.UnitTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ShoppingControllerTests extends UnitTest {
 
-    @InjectMocks
-    private ShoppingController controller;
+    private final ShoppingController controller = new TestableShoppingController(true);
+
+    static class TestableShoppingController extends ShoppingController {
+
+        private final boolean applyDiscounts;
+
+        TestableShoppingController(boolean applyDiscounts) {
+            this.applyDiscounts = applyDiscounts;
+        }
+
+        @Override
+        protected boolean isNotWinterOrSummerDiscountsPeriods() {
+            return !applyDiscounts;
+        }
+    }
 
     @Test
     void should_throw_when_customer_type_is_unknown() {
