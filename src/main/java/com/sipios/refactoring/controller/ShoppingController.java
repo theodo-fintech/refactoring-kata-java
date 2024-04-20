@@ -3,6 +3,9 @@ package com.sipios.refactoring.controller;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import com.sipios.refactoring.dtos.Purchase;
+import com.sipios.refactoring.dtos.PurchaseItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,7 +22,7 @@ public class ShoppingController {
     private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
     @PostMapping
-    public String getPrice(@RequestBody Body b) {
+    public String getPrice(@RequestBody Purchase b) {
         double p = 0;
         double d;
 
@@ -28,11 +31,11 @@ public class ShoppingController {
         cal.setTime(date);
 
         // Compute discount for customer
-        if (b.getType().equals("STANDARD_CUSTOMER")) {
+        if (b.getCustomerType().equals("STANDARD_CUSTOMER")) {
             d = 1;
-        } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+        } else if (b.getCustomerType().equals("PREMIUM_CUSTOMER")) {
             d = 0.9;
-        } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+        } else if (b.getCustomerType().equals("PLATINUM_CUSTOMER")) {
             d = 0.5;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -52,12 +55,12 @@ public class ShoppingController {
                 cal.get(Calendar.MONTH) == 0
             )
         ) {
-            if (b.getItems() == null) {
+            if (b.getPurchasedItems() == null) {
                 return "0";
             }
 
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
+            for (int i = 0; i < b.getPurchasedItems().length; i++) {
+                PurchaseItem it = b.getPurchasedItems()[i];
 
                 if (it.getType().equals("TSHIRT")) {
                     p += 30 * it.getNb() * d;
@@ -66,17 +69,17 @@ public class ShoppingController {
                 } else if (it.getType().equals("JACKET")) {
                     p += 100 * it.getNb() * d;
                 }
-                // else if (it.getType().equals("SWEATSHIRT")) {
+                // else if (it.getCustomerType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getNb();
                 // }
             }
         } else {
-            if (b.getItems() == null) {
+            if (b.getPurchasedItems() == null) {
                 return "0";
             }
 
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
+            for (int i = 0; i < b.getPurchasedItems().length; i++) {
+                PurchaseItem it = b.getPurchasedItems()[i];
 
                 if (it.getType().equals("TSHIRT")) {
                     p += 30 * it.getNb() * d;
@@ -85,22 +88,22 @@ public class ShoppingController {
                 } else if (it.getType().equals("JACKET")) {
                     p += 100 * it.getNb() * 0.9 * d;
                 }
-                // else if (it.getType().equals("SWEATSHIRT")) {
+                // else if (it.getCustomerType().equals("SWEATSHIRT")) {
                 //     price += 80 * it.getNb();
                 // }
             }
         }
 
         try {
-            if (b.getType().equals("STANDARD_CUSTOMER")) {
+            if (b.getCustomerType().equals("STANDARD_CUSTOMER")) {
                 if (p > 200) {
                     throw new Exception("Price (" + p + ") is too high for standard customer");
                 }
-            } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+            } else if (b.getCustomerType().equals("PREMIUM_CUSTOMER")) {
                 if (p > 800) {
                     throw new Exception("Price (" + p + ") is too high for premium customer");
                 }
-            } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+            } else if (b.getCustomerType().equals("PLATINUM_CUSTOMER")) {
                 if (p > 2000) {
                     throw new Exception("Price (" + p + ") is too high for platinum customer");
                 }
@@ -117,60 +120,3 @@ public class ShoppingController {
     }
 }
 
-class Body {
-
-    private Item[] items;
-    private String type;
-
-    public Body(Item[] is, String t) {
-        this.items = is;
-        this.type = t;
-    }
-
-    public Body() {}
-
-    public Item[] getItems() {
-        return items;
-    }
-
-    public void setItems(Item[] items) {
-        this.items = items;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-}
-
-class Item {
-
-    private String type;
-    private int nb;
-
-    public Item() {}
-
-    public Item(String type, int quantity) {
-        this.type = type;
-        this.nb = quantity;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public int getNb() {
-        return nb;
-    }
-
-    public void setNb(int nb) {
-        this.nb = nb;
-    }
-}
