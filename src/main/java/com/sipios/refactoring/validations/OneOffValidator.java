@@ -1,7 +1,5 @@
 package com.sipios.refactoring.validations;
 
-import com.sipios.refactoring.dtos.Purchase;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
