@@ -27,4 +27,12 @@ public class PurchaseItem {
     public void setNb(int nb) {
         this.nb = nb;
     }
+
+    @Override
+    public String toString() {
+        return "PurchaseItem{" +
+                "type='" + type + '\'' +
+                ", nb=" + nb +
+                '}';
+    }
 }

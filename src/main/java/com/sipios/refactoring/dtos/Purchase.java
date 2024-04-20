@@ -2,6 +2,8 @@ package com.sipios.refactoring.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Arrays;
+
 public class Purchase {
 
     @JsonProperty("items")
@@ -35,4 +37,11 @@ public class Purchase {
     }
 
 
+    @Override
+    public String toString() {
+        return "Purchase{" +
+                "purchasedItems=" + Arrays.toString(purchasedItems) +
+                ", customerType='" + customerType + '\'' +
+                '}';
+    }
 }
