@@ -26,7 +26,7 @@ class ShoppingControllerTests extends UnitTest {
     void should_not_throw() {
         when(shoppingService.getPriceByDate(any(), any(), any())).thenReturn(100d);
         Assertions.assertDoesNotThrow(
-            () -> controller.getPrice(new Purchase(new PurchaseItem[]{}, "STANDARD_CUSTOMER"))
+            () -> controller.getPrice(new Purchase(new PurchaseItem[]{}, "STANDARD_CUSTOMER"), mock(BindingResult.class))
         );
     }
 
