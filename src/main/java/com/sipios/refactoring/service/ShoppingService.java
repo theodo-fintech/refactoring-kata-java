@@ -8,17 +8,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 @Service
 public class ShoppingService {
 
-    public String getPrice(Body body) {
+    public String getPrice(Body body, Calendar cal) {
         double p = 0;
         double d;
 
         Date date = new Date();
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
         // Compute discount for customer
