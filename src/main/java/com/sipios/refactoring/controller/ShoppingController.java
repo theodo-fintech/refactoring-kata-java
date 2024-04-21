@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 @RestController
@@ -29,7 +30,9 @@ public class ShoppingController {
 
     @PostMapping
     public String getPrice(@RequestBody Body body) {
+        Date date = new Date();
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+        calendar.setTime(date);
         return shoppingService.getPrice(body, calendar);
 
     }

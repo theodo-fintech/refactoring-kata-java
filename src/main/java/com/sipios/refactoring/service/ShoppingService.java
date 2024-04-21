@@ -16,9 +16,6 @@ public class ShoppingService {
         double p = 0;
         double d;
 
-        Date date = new Date();
-        cal.setTime(date);
-
         // Compute discount for customer
         if (body.getType().equals("STANDARD_CUSTOMER")) {
             d = 1;
