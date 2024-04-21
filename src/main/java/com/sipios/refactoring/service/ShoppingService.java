@@ -15,16 +15,7 @@ public class ShoppingService {
         double price = 0;
         double discount;
 
-        // Compute discount for customer
-        if (body.getType().equals("STANDARD_CUSTOMER")) {
-            discount = 1;
-        } else if (body.getType().equals("PREMIUM_CUSTOMER")) {
-            discount = 0.9;
-        } else if (body.getType().equals("PLATINUM_CUSTOMER")) {
-            discount = 0.5;
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        discount = getDiscount(body);
 
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
@@ -97,4 +88,20 @@ public class ShoppingService {
 
         return String.valueOf(price);
     }
+
+    private double getDiscount(Body body) {
+        double discount;
+        if (body.getType().equals("STANDARD_CUSTOMER")) {
+            discount = 1;
+        } else if (body.getType().equals("PREMIUM_CUSTOMER")) {
+            discount = 0.9;
+        } else if (body.getType().equals("PLATINUM_CUSTOMER")) {
+            discount = 0.5;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return discount;
+    }
+
+
 }
