@@ -36,4 +36,15 @@ public class ShoppingControllerIntegrationTests {
             .andExpect(status().isOk())
             .andExpect(content().string("80.0")); // (1 * 30 + 1 * 50) * 1.0 = 80
     }
+
+    @Test
+    public void testBadRequestForUnknownType() throws Exception {
+        Item[] items = { new Item("SWEATSHIRT", 1) };
+        Body body = new Body(items, "UNKNOWN_TYPE");
+
+        mockMvc.perform(post("/shopping")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(body)))
+            .andExpect(status().isBadRequest());
+    }
 }
