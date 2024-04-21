@@ -16,13 +16,7 @@ public class ShoppingService {
         double discount;
 
         discount = getDiscount(body);
-
-        if (body.getItems() == null) {
-            return "0";
-        }
-
         price = computeTotalPrice(body, cal, price, discount);
-
         checkIfThePriceIsTooHigh(body, price);
 
         return String.valueOf(price);
@@ -53,6 +47,10 @@ public class ShoppingService {
     }
 
     private double computeTotalPrice(Body body, Calendar cal, double price, double discount) {
+        if (body.getItems() == null) {
+            return 0;
+        }
+
         // if we are in winter or summer discounts periods
         if (
             !(
