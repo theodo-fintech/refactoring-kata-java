@@ -15,15 +15,7 @@ public class Body {
         return items;
     }
 
-    public void setItems(Item[] items) {
-        this.items = items;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }

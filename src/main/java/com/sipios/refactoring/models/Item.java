@@ -16,15 +16,7 @@ public class Item {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public int getNb() {
         return nb;
-    }
-
-    public void setNb(int nb) {
-        this.nb = nb;
     }
 }
