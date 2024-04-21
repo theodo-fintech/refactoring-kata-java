@@ -13,8 +13,7 @@ import java.util.TimeZone;
 @Service
 public class ShoppingService {
 
-
-    public String getPrice( Body b) throws Exception {
+    public String getPrice( Body b) {
         double p = 0;
         double d;
 
@@ -80,22 +79,26 @@ public class ShoppingService {
             }
         }
 
-        if (b.getType().equals("STANDARD_CUSTOMER")) {
-            if (p > 200) {
-                throw new Exception("Price (" + p + ") is too high for standard customer");
+        try {
+            if (b.getType().equals("STANDARD_CUSTOMER")) {
+                if (p > 200) {
+                    throw new Exception("Price (" + p + ") is too high for standard customer");
+                }
+            } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+                if (p > 800) {
+                    throw new Exception("Price (" + p + ") is too high for premium customer");
+                }
+            } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+                if (p > 2000) {
+                    throw new Exception("Price (" + p + ") is too high for platinum customer");
+                }
+            } else {
+                if (p > 200) {
+                    throw new Exception("Price (" + p + ") is too high for standard customer");
+                }
             }
-        } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
-            if (p > 800) {
-                throw new Exception("Price (" + p + ") is too high for premium customer");
-            }
-        } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
-            if (p > 2000) {
-                throw new Exception("Price (" + p + ") is too high for platinum customer");
-            }
-        } else {
-            if (p > 200) {
-                throw new Exception("Price (" + p + ") is too high for standard customer");
-            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
         return String.valueOf(p);
