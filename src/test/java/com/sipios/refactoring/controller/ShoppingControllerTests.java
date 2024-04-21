@@ -1,6 +1,8 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.UnitTest;
+import com.sipios.refactoring.models.Body;
+import com.sipios.refactoring.models.Item;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
