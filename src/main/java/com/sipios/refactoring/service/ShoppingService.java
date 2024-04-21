@@ -23,6 +23,12 @@ public class ShoppingService {
 
         price = computeTotalPrice(body, cal, price, discount);
 
+        checkIfThePriceIsTooHigh(body, price);
+
+        return String.valueOf(price);
+    }
+
+    private void checkIfThePriceIsTooHigh(Body body, double price) {
         try {
             if (body.getType().equals("STANDARD_CUSTOMER")) {
                 if (price > 200) {
@@ -44,8 +50,6 @@ public class ShoppingService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-
-        return String.valueOf(price);
     }
 
     private double computeTotalPrice(Body body, Calendar cal, double price, double discount) {
