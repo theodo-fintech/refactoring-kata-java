@@ -13,7 +13,7 @@ import java.util.TimeZone;
 @Service
 public class ShoppingService {
 
-    public String getPrice( Body b) {
+    public String getPrice(Body body) {
         double p = 0;
         double d;
 
@@ -22,11 +22,11 @@ public class ShoppingService {
         cal.setTime(date);
 
         // Compute discount for customer
-        if (b.getType().equals("STANDARD_CUSTOMER")) {
+        if (body.getType().equals("STANDARD_CUSTOMER")) {
             d = 1;
-        } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+        } else if (body.getType().equals("PREMIUM_CUSTOMER")) {
             d = 0.9;
-        } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+        } else if (body.getType().equals("PLATINUM_CUSTOMER")) {
             d = 0.5;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -46,12 +46,12 @@ public class ShoppingService {
                         cal.get(Calendar.MONTH) == 0
                 )
         ) {
-            if (b.getItems() == null) {
+            if (body.getItems() == null) {
                 return "0";
             }
 
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
+            for (int i = 0; i < body.getItems().length; i++) {
+                Item it = body.getItems()[i];
 
                 if (it.getType().equals("TSHIRT")) {
                     p += 30 * it.getNb() * d;
@@ -62,12 +62,12 @@ public class ShoppingService {
                 }
             }
         } else {
-            if (b.getItems() == null) {
+            if (body.getItems() == null) {
                 return "0";
             }
 
-            for (int i = 0; i < b.getItems().length; i++) {
-                Item it = b.getItems()[i];
+            for (int i = 0; i < body.getItems().length; i++) {
+                Item it = body.getItems()[i];
 
                 if (it.getType().equals("TSHIRT")) {
                     p += 30 * it.getNb() * d;
@@ -80,15 +80,15 @@ public class ShoppingService {
         }
 
         try {
-            if (b.getType().equals("STANDARD_CUSTOMER")) {
+            if (body.getType().equals("STANDARD_CUSTOMER")) {
                 if (p > 200) {
                     throw new Exception("Price (" + p + ") is too high for standard customer");
                 }
-            } else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+            } else if (body.getType().equals("PREMIUM_CUSTOMER")) {
                 if (p > 800) {
                     throw new Exception("Price (" + p + ") is too high for premium customer");
                 }
-            } else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+            } else if (body.getType().equals("PLATINUM_CUSTOMER")) {
                 if (p > 2000) {
                     throw new Exception("Price (" + p + ") is too high for platinum customer");
                 }
