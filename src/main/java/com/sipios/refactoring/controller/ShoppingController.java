@@ -66,9 +66,6 @@ public class ShoppingController {
                 } else if (it.getType().equals("JACKET")) {
                     p += 100 * it.getNb() * d;
                 }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
             }
         } else {
             if (b.getItems() == null) {
@@ -85,9 +82,6 @@ public class ShoppingController {
                 } else if (it.getType().equals("JACKET")) {
                     p += 100 * it.getNb() * 0.9 * d;
                 }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
             }
         }
 
