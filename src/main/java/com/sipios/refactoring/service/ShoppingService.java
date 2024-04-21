@@ -52,20 +52,7 @@ public class ShoppingService {
     }
 
     private double computeTotalPrice(Body body, Calendar cal, double price, double discount) {
-        // if we are in winter or summer discounts periods
-        if (
-            !(
-                cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                    cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                    cal.get(Calendar.MONTH) == 5
-            ) &&
-                !(
-                    cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-                        cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-                        cal.get(Calendar.MONTH) == 0
-                )
-        ) {
-
+        if (isWinterOrSummer(cal)) {
             for (int i = 0; i < body.getItems().length; i++) {
                 Item it = body.getItems()[i];
 
@@ -78,7 +65,6 @@ public class ShoppingService {
                 }
             }
         } else {
-
             for (int i = 0; i < body.getItems().length; i++) {
                 Item it = body.getItems()[i];
 
@@ -92,6 +78,14 @@ public class ShoppingService {
             }
         }
         return price;
+    }
+
+    private boolean isWinterOrSummer(Calendar cal) {
+        return !(
+            cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+                cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+                (cal.get(Calendar.MONTH) == 5 || cal.get(Calendar.MONTH) == 0)
+        );
     }
 
     private double getDiscount(Body body) {
