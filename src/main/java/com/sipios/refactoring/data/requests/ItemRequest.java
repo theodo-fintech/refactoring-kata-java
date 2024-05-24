@@ -1,13 +1,13 @@
 package com.sipios.refactoring.data.requests;
 
-public class Item {
+public class ItemRequest {
 
     private String type;
     private int quantity;
 
-    public Item() {}
+    public ItemRequest() {}
 
-    public Item(String type, int quantity) {
+    public ItemRequest(String type, int quantity) {
         this.type = type;
         this.quantity = quantity;
     }

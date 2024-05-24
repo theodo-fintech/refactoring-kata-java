@@ -1,7 +1,7 @@
 package com.sipios.refactoring.controller;
 
-import com.sipios.refactoring.data.requests.Item;
-import com.sipios.refactoring.data.requests.ShoppingCart;
+import com.sipios.refactoring.data.requests.ItemRequest;
+import com.sipios.refactoring.data.requests.ShoppingRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class ShoppingController {
     private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
     @PostMapping
-    public String getPrice(@RequestBody ShoppingCart shoppingCart) {
+    public String getPrice(@RequestBody ShoppingRequest shoppingRequest) {
         double price = 0;
         double customerDiscount;
 
@@ -31,11 +31,11 @@ public class ShoppingController {
         cal.setTime(date);
 
         // Compute discount for customer
-        if (shoppingCart.getType().equals("STANDARD_CUSTOMER")) {
+        if (shoppingRequest.getType().equals("STANDARD_CUSTOMER")) {
             customerDiscount = 1;
-        } else if (shoppingCart.getType().equals("PREMIUM_CUSTOMER")) {
+        } else if (shoppingRequest.getType().equals("PREMIUM_CUSTOMER")) {
             customerDiscount = 0.9;
-        } else if (shoppingCart.getType().equals("PLATINUM_CUSTOMER")) {
+        } else if (shoppingRequest.getType().equals("PLATINUM_CUSTOMER")) {
             customerDiscount = 0.5;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -55,12 +55,12 @@ public class ShoppingController {
                 cal.get(Calendar.MONTH) == 0
             )
         ) {
-            if (shoppingCart.getItems() == null) {
+            if (shoppingRequest.getItems() == null) {
                 return "0";
             }
 
-            for (int i = 0; i < shoppingCart.getItems().length; i++) {
-                Item item = shoppingCart.getItems()[i];
+            for (int i = 0; i < shoppingRequest.getItems().length; i++) {
+                ItemRequest item = shoppingRequest.getItems()[i];
 
                 if (item.getType().equals("TSHIRT")) {
                     price += 30 * item.getQuantity() * customerDiscount;
@@ -74,12 +74,12 @@ public class ShoppingController {
                 // }
             }
         } else {
-            if (shoppingCart.getItems() == null) {
+            if (shoppingRequest.getItems() == null) {
                 return "0";
             }
 
-            for (int i = 0; i < shoppingCart.getItems().length; i++) {
-                Item item = shoppingCart.getItems()[i];
+            for (int i = 0; i < shoppingRequest.getItems().length; i++) {
+                ItemRequest item = shoppingRequest.getItems()[i];
 
                 if (item.getType().equals("TSHIRT")) {
                     price += 30 * item.getQuantity() * customerDiscount;
@@ -95,15 +95,15 @@ public class ShoppingController {
         }
 
         try {
-            if (shoppingCart.getType().equals("STANDARD_CUSTOMER")) {
+            if (shoppingRequest.getType().equals("STANDARD_CUSTOMER")) {
                 if (price > 200) {
                     throw new Exception("Price (" + price + ") is too high for standard customer");
                 }
-            } else if (shoppingCart.getType().equals("PREMIUM_CUSTOMER")) {
+            } else if (shoppingRequest.getType().equals("PREMIUM_CUSTOMER")) {
                 if (price > 800) {
                     throw new Exception("Price (" + price + ") is too high for premium customer");
                 }
-            } else if (shoppingCart.getType().equals("PLATINUM_CUSTOMER")) {
+            } else if (shoppingRequest.getType().equals("PLATINUM_CUSTOMER")) {
                 if (price > 2000) {
                     throw new Exception("Price (" + price + ") is too high for platinum customer");
                 }

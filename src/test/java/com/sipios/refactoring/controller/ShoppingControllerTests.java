@@ -1,6 +1,8 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.UnitTest;
+import com.sipios.refactoring.data.requests.ItemRequest;
+import com.sipios.refactoring.data.requests.ShoppingRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
@@ -15,9 +17,9 @@ class ShoppingControllerTests extends UnitTest {
     @Test
     void getPrice_whenEmptyCart_shouldReturnZero() {
         // Given
-        var emptyCart = new Item[] {};
+        var emptyCart = new ItemRequest[] {};
         // When
-        var actual = controller.getPrice(new ShoppingCart(emptyCart, "STANDARD_CUSTOMER"));
+        var actual = controller.getPrice(new ShoppingRequest(emptyCart, "STANDARD_CUSTOMER"));
         // Then
         assertEquals(0, parseDouble(actual));
     }
@@ -33,9 +35,9 @@ class ShoppingControllerTests extends UnitTest {
         // Given
         var itemType = "TSHIRT";
         var customerType = "STANDARD_CUSTOMER";
-        Item[] items = {new Item(itemType, 1)};
+        ItemRequest[] items = {new ItemRequest(itemType, 1)};
         // When
-        var actual = controller.getPrice(new ShoppingCart(items, customerType));
+        var actual = controller.getPrice(new ShoppingRequest(items, customerType));
         // Then
         assertEquals(30, parseDouble(actual));
     }
@@ -51,12 +53,14 @@ class ShoppingControllerTests extends UnitTest {
         // Given
         var customerType = "PREMIUM_CUSTOMER";
         var itemType = "TSHIRT";
-        Item[] items = {new Item(itemType, 1)};
+        ItemRequest[] items = {new ItemRequest(itemType, 1)};
         var expected = 30 * 0.9;
         // When
-        var actual = controller.getPrice(new ShoppingCart(items, customerType));
+        var actual = controller.getPrice(new ShoppingRequest(items, customerType));
         // Then
         assertEquals(expected, parseDouble(actual));
     }
+
+
 
 }

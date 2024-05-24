@@ -1,22 +1,22 @@
 package com.sipios.refactoring.data.requests;
 
-public class ShoppingCart {
+public class ShoppingRequest {
 
-    private Item[] items;
+    private ItemRequest[] items;
     private String type;
 
-    public ShoppingCart(Item[] is, String t) {
+    public ShoppingRequest(ItemRequest[] is, String t) {
         this.items = is;
         this.type = t;
     }
 
-    public ShoppingCart() {}
+    public ShoppingRequest() {}
 
-    public Item[] getItems() {
+    public ItemRequest[] getItems() {
         return items;
     }
 
-    public void setItems(Item[] items) {
+    public void setItems(ItemRequest[] items) {
         this.items = items;
     }
 
