@@ -1,5 +1,7 @@
 package com.sipios.refactoring.controller;
 
+import com.sipios.refactoring.data.requests.Item;
+import com.sipios.refactoring.data.requests.ShoppingCart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -115,63 +117,5 @@ public class ShoppingController {
         }
 
         return String.valueOf(price);
-    }
-}
-
-class ShoppingCart {
-
-    private Item[] items;
-    private String type;
-
-    public ShoppingCart(Item[] is, String t) {
-        this.items = is;
-        this.type = t;
-    }
-
-    public ShoppingCart() {}
-
-    public Item[] getItems() {
-        return items;
-    }
-
-    public void setItems(Item[] items) {
-        this.items = items;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-}
-
-class Item {
-
-    private String type;
-    private int quantity;
-
-    public Item() {}
-
-    public Item(String type, int quantity) {
-        this.type = type;
-        this.quantity = quantity;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 }
