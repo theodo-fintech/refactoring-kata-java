@@ -1,9 +1,11 @@
 package com.sipios.refactoring.controller;
 
 import com.sipios.refactoring.data.domain.CustomerType;
-import com.sipios.refactoring.data.requests.ItemRequest;
+import com.sipios.refactoring.data.domain.Item;
+import com.sipios.refactoring.data.domain.ItemType;
+import com.sipios.refactoring.data.domain.ShoppingCart;
 import com.sipios.refactoring.data.requests.ShoppingRequest;
-import com.sipios.refactoring.service.DiscountService;
+import com.sipios.refactoring.service.ShoppingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/shopping")
@@ -20,16 +25,14 @@ public class ShoppingController {
 
 //    private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
-    private final DiscountService discountService;
+    private final ShoppingService shoppingService;
 
-    public ShoppingController(DiscountService discountService) {
-        this.discountService = discountService;
+    public ShoppingController(ShoppingService shoppingService) {
+        this.shoppingService = shoppingService;
     }
 
     @PostMapping
     public String getPrice(@RequestBody ShoppingRequest shoppingRequest) {
-        double price = 0;
-
         CustomerType customerType;
         try {
             customerType = CustomerType.valueOf(shoppingRequest.getType().replaceAll("_CUSTOMER", ""));
@@ -39,51 +42,15 @@ public class ShoppingController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
         }
 
-        double customerDiscount = customerType.getDiscount();
-
-
-
-        if (discountService.isSeasonal(LocalDate.now())) {
-            if (shoppingRequest.getItems() == null) {
-                return "0";
-            }
-
-            for (int i = 0; i < shoppingRequest.getItems().length; i++) {
-                ItemRequest item = shoppingRequest.getItems()[i];
-
-                if (item.getType().equals("TSHIRT")) {
-                    price += 30 * item.getQuantity() * customerDiscount;
-                } else if (item.getType().equals("DRESS")) {
-                    price += 50 * item.getQuantity() * customerDiscount;
-                } else if (item.getType().equals("JACKET")) {
-                    price += 100 * item.getQuantity() * customerDiscount;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
-        } else {
-            if (shoppingRequest.getItems() == null) {
-                return "0";
-            }
-
-            for (int i = 0; i < shoppingRequest.getItems().length; i++) {
-                ItemRequest item = shoppingRequest.getItems()[i];
-
-                if (item.getType().equals("TSHIRT")) {
-                    price += 30 * item.getQuantity() * customerDiscount;
-                } else if (item.getType().equals("DRESS")) {
-                    price += 50 * item.getQuantity() * 0.8 * customerDiscount;
-                } else if (item.getType().equals("JACKET")) {
-                    price += 100 * item.getQuantity() * 0.9 * customerDiscount;
-                }
-                // else if (it.getType().equals("SWEATSHIRT")) {
-                //     price += 80 * it.getNb();
-                // }
-            }
+        if (shoppingRequest.getItems() == null) {
+            return "0";
         }
 
+        List<Item> items = Stream.of(shoppingRequest.getItems())
+            .map(request -> new Item(ItemType.valueOf(request.getType()), request.getQuantity()))
+            .collect(Collectors.toList());
 
+        var price = shoppingService.getPrice(new ShoppingCart(items, customerType), LocalDate.now());
 
         if (!customerType.accepts(price)) {
             String message = "Price (" + price + ") is too high for "

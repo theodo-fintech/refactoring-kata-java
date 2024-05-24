@@ -6,16 +6,16 @@ package com.sipios.refactoring.data.domain;
  */
 public class Item {
 
-    private final ItemType itemType;
+    private final ItemType type;
     private final int quantity;
 
-    public Item(ItemType itemType, int quantity) {
-        this.itemType = itemType;
+    public Item(ItemType type, int quantity) {
+        this.type = type;
         this.quantity = quantity;
     }
 
-    public ItemType getItemType() {
-        return itemType;
+    public ItemType getType() {
+        return type;
     }
 
     public int getQuantity() {
