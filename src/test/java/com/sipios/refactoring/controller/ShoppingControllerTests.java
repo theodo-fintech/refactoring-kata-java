@@ -61,6 +61,4 @@ class ShoppingControllerTests extends UnitTest {
         assertEquals(expected, parseDouble(actual));
     }
 
-
-
 }

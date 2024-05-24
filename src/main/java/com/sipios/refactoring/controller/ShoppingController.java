@@ -1,5 +1,6 @@
 package com.sipios.refactoring.controller;
 
+import com.sipios.refactoring.data.domain.CustomerType;
 import com.sipios.refactoring.data.requests.ItemRequest;
 import com.sipios.refactoring.data.requests.ShoppingRequest;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -24,22 +26,24 @@ public class ShoppingController {
     @PostMapping
     public String getPrice(@RequestBody ShoppingRequest shoppingRequest) {
         double price = 0;
-        double customerDiscount;
+
+        CustomerType customerType;
+        try {
+            customerType = CustomerType.valueOf(shoppingRequest.getType().replaceAll("_CUSTOMER", ""));
+        } catch (IllegalArgumentException exception) {
+            String message = "Unexpected customer type: " + shoppingRequest.getType()
+                + ". Supported values: " + Arrays.toString(CustomerType.values());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+        }
+
+        double customerDiscount = customerType.getDiscount();
+
+
 
         Date date = new Date();
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
         cal.setTime(date);
 
-        // Compute discount for customer
-        if (shoppingRequest.getType().equals("STANDARD_CUSTOMER")) {
-            customerDiscount = 1;
-        } else if (shoppingRequest.getType().equals("PREMIUM_CUSTOMER")) {
-            customerDiscount = 0.9;
-        } else if (shoppingRequest.getType().equals("PLATINUM_CUSTOMER")) {
-            customerDiscount = 0.5;
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
 
         // Compute total amount depending on the types and quantity of product and
         // if we are in winter or summer discounts periods
@@ -94,26 +98,13 @@ public class ShoppingController {
             }
         }
 
-        try {
-            if (shoppingRequest.getType().equals("STANDARD_CUSTOMER")) {
-                if (price > 200) {
-                    throw new Exception("Price (" + price + ") is too high for standard customer");
-                }
-            } else if (shoppingRequest.getType().equals("PREMIUM_CUSTOMER")) {
-                if (price > 800) {
-                    throw new Exception("Price (" + price + ") is too high for premium customer");
-                }
-            } else if (shoppingRequest.getType().equals("PLATINUM_CUSTOMER")) {
-                if (price > 2000) {
-                    throw new Exception("Price (" + price + ") is too high for platinum customer");
-                }
-            } else {
-                if (price > 200) {
-                    throw new Exception("Price (" + price + ") is too high for standard customer");
-                }
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+
+
+        if (!customerType.accepts(price)) {
+            String message = "Price (" + price + ") is too high for "
+                + customerType + " customer. "
+                + "Limit is: " + customerType.getPriceLimit();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
         }
 
         return String.valueOf(price);

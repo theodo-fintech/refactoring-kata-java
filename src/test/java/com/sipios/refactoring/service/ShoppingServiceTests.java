@@ -12,10 +12,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * A {@code ShoppingServiceTests} is...
- * TODO: write javadoc...
- */
 public class ShoppingServiceTests extends UnitTest {
 
 
@@ -26,8 +22,8 @@ public class ShoppingServiceTests extends UnitTest {
         // Given
         var summerDate = LocalDate.parse("2023-06-10");
         var itemType = ItemType.TSHIRT;
-        var items = List.of(new Item(itemType, 1));
-        var shoppingCart = new ShoppingCart(items, CustomerType.STANDARD);
+        var itemList = List.of(new Item(itemType, 1));
+        var shoppingCart = new ShoppingCart(itemList, CustomerType.STANDARD);
         var expected = itemType.getPrice() * itemType.getSeasonalDiscount();
         // When
         var actual = shoppingService.getPrice(shoppingCart, summerDate);

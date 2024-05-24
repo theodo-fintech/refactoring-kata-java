@@ -9,10 +9,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * A {@code DiscountServiceTests} is...
- * TODO: write javadoc...
- */
 public class DiscountServiceTests extends UnitTest {
 
     public DiscountService discountService;
