@@ -4,6 +4,7 @@ import com.sipios.refactoring.service.DiscountService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
 
 /**
  * A {@code DiscountServiceImpl} is...
@@ -14,8 +15,10 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public boolean isSeasonal(LocalDate date) {
-        // TODO: impl
-        throw new UnsupportedOperationException("Not implemented yet");
+        var month = date.getMonth();
+        var dayOfMonth = date.getDayOfMonth();
+        var fallsWithinRange = dayOfMonth > 5 && dayOfMonth < 15;
+        return (fallsWithinRange && (month == Month.JANUARY || month == Month.JUNE));
     }
 
 }
